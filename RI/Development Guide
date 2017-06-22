@@ -1,0 +1,13 @@
+The Registry Interface is a key component of the SUNFISH architecture. It has two purposes. On one hand, it interacts with the fabric blockchain.
+On the other hand, it provides web interfaces for other SUNFISH components to enable the interactions between those components and the blockchain. 
+
+The flow control in the registry interface is as follows:
+
+SUNFISH Component ====> ri.js --> *API.js --> hyperledger*.js ====> fabric ====> SUNFISH Component
+
+The ri.js is the entry point of the registry interface. There are different hyperledger*.js files; each of which is responsible for interacting with a particular smart-contract.
+There are also different *API.js files which are responsible for forwarding each request to the appropriate hyperledger*.js file. Currently, these *API.js files are configured to
+hyperledger. However, if needed, this configuration can be changed in the config.ini file and also by developing required *.js files which interact with the other blockchain.
+
+A SUNFISH component submits a request following the SUNFISH RI specification. Based on the request path, the request is forwarded
+internally to the appropriate *API.js file. Then this file  forwards the request to the corresponding hyperledger*.js file where the request is handled.

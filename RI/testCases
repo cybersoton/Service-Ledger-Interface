@@ -1,0 +1,104 @@
+===============Test cases for Alert============================
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID1","token":"token1","timeStamp":"ts1","alertID":"al1","alertType":"at1","alertSource":"as1","alert":"alert1"}' -k https://{docker_IP}:8075/api/alert/store -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID1","token":"token1","index":"0"}' -k https://{docker_IP}:8075/api/alert/read -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID2","token":"token2","timeStamp":"ts2","alertID":"al2","alertType":"at2","alertSource":"as2","alert":"alert2"}' -k https://{docker_IP}:8075/api/alert/store -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID2","token":"token2","index":"1"}' -k https://{docker_IP}:8075/api/alert/read -i
+===============Test cases for Alert============================
+===============Test cases for Access Monitoring============================
+curl -H "Content-Type: application/json" -X POST -d '{"loggerID":"reqID1","token":"token1","timeStamp":"ts1","dataType":"REQUEST","data":"data1", "id": "id1"}' -k https://{docker_IP}:8075/api/monitoring/store -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"loggerID":"reqID","token":"token","id":"id1"}' -k https://{docker_IP}:8075/api/monitoring/read -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"loggerID":"reqID2","token":"token2","timeStamp":"ts2","dataType":"RESPONSE","data":"data2","id": "id1"}' -k https://{docker_IP}:8075/api/monitoring/store -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"loggerID":"reqID","token":"token","id":"id1"}' -k https://{docker_IP}:8075/api/monitoring/read -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"loggerID":"reqID3","token":"token3","timeStamp":"ts3","dataType":"RESPONSE","data":"data3", , "id": "id2"}' -k https://{docker_IP}:8075/api/monitoring/store -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"loggerID":"reqID3","token":"token3","id":"id2"}' -k https://{docker_IP}:8075/api/monitoring/read -i
+===============Test cases for Access Monitoring============================
+
+===============Test cases for Data Anonymisation============================
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID1","token":"token1","timeStamp":"ts1","data_provider":"dp1","data_consumer":"dc1","dataID":"did1"}' -k https://{docker_IP}:8075/api/anonymisation/register -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","data_consumer":"dc1"}' -k https://{docker_IP}:8075/api/anonymisation/read -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID2","token":"token2","timeStamp":"ts2","data_provider":"dp2","data_consumer":"dc2","dataID":"did2"}' -k https://{docker_IP}:8075/api/anonymisation/register -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","data_consumer":"dc2"}' -k https://{docker_IP}:8075/api/anonymisation/read -i
+===============Test cases for Data Anonymisation============================
+===============Test cases for DM Key============================
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","timestamp":"ts1","dataID":"123","key":"key1"}' -k https://{docker_IP}:8075/api/dm/register -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","timestamp":"ts2","dataID":"456","key":"key2"}' -k https://{docker_IP}:8075/api/dm/register -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","index":"..."}' -k https://{docker_IP}:8075/api/dm/read -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","key":"key11","index":"..."}' -k https://{docker_IP}:8075/api/dm/update -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","index":"..."}' -k https://{docker_IP}:8075/api/dm/delete -i
+===============Test cases for DM Key============================
+
+===============Test cases for Federation============================
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","timestamp":"ts1","id":"fed1","name":"name1"}' -k https://{docker_IP}:8075/api/fed/create -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","id":"fed1"}' -k https://{docker_IP}:8075/api/fed/read -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","timestamp":"ts2","id":"fed1","newMember":"member1"}' -k https://{docker_IP}:8075/api/fed/add -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","id":"fed1"}' -k https://{docker_IP}:8075/api/fed/read -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","timestamp":"ts3","id":"fed1","newMember":"member2"}' -k https://{docker_IP}:8075/api/fed/add -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","id":"fed1"}' -k https://{docker_IP}:8075/api/fed/read -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","timestamp":"ts2","id":"fed1","newMember":"member2"}' -k https://{docker_IP}:8075/api/fed/remove -i
+===============Test cases for Federation============================
+===============Test cases for Policy============================
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","policy":"pol","expirationTime":"et","id":"123","serviceID":"s123","policyType":"pType"}' -k https://docker_IP:8075/api/prp/policy/store -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","policy":"pol2","expirationTime":"et2","id":"456","serviceID":"s123","policyType":"pType"}' -k https://docker_IP:8075/api/prp/policy/store -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","policy":"pol3","expirationTime":"et3","id":"789","serviceID":"s456","policyType":"pType"}' -k https://docker_IP:8075/api/prp/policy/store -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","policy":"pol4","expirationTime":"et4","id":"911","serviceID":"s456","policyType":"pType"}' -k https://docker_IP:8075/api/prp/policy/store -i
+
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","id":"123"}' -k https://docker_IP:8075/api/prp/policy/read -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","id":"911"}' -k https://docker_IP:8075/api/prp/policy/read -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","serviceID":"s123","policyType":"pType"}' -k https://docker_IP:8075/api/prp/policy/service -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","serviceID":"s456","policyType":"pType"}' -k https://docker_IP:8075/api/prp/policy/service -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","policy":"pol11","id":"123"}' -k https://docker_IP:8075/api/prp/policy/update -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","id":"123"}' -k https://docker_IP:8075/api/prp/policy/delete
+===============Test cases for Policy============================
+
+===============Test cases for SLA Metrics============================
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","timeStamp":"ts1","availability":"av1","responseTime":"rt1","CPUPower":"power1","diskSpace":"ds1","memorySize":"ms1","bandwidth":"bw1","throughput":"tp1","connections":"cn1","elasticity":"ec1"}' -k https://{docker_IP}:8075/api/metrics/store -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","index":"1"}' -k https://{docker_IP}:8075/api/metrics/read -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID2","token":"token2","timeStamp":"ts2","availability":"av2","responseTime":"rt2","CPUPower":"power2","diskSpace":"ds2","memorySize":"ms2","bandwidth":"bw2","throughput":"tp2","connections":"cn2","elasticity":"ec2"}' -k https://{docker_IP}:8075/api/metrics/store -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","index":"fed1"}' -k https://{docker_IP}:8075/api/metrics/read -i
+===============Test cases for SLA Metrics============================
+
+===============Test cases for State============================
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","serviceID":"sid1","url":"url1","name":"name1"}' -k https://{docker_IP}:8075/api/state/store -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","serviceID":"sid1"}' -k https://{docker_IP}:8075/api/state/read -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","serviceID":"sid1","list":[{"name":"name","value":"name11"},{"name":"url","value":"url11"}]}' -k https://{docker_IP}:8075/api/state/update -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","serviceID":"sid1"}' -k https://{docker_IP}:8075/api/state/read -i
+
+curl -H "Content-Type: application/json" -X POST -d '{"requestorID":"reqID","token":"token","serviceID":"sid1"}' -k https://{docker_IP}:8075/api/state/delete -i
+===============Test cases for State============================
