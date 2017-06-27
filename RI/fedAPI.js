@@ -18,7 +18,7 @@ var https = require('https');
 var http = require('http');
 var fs = require('fs');
 var url = require( "url" );
-var hyperledgerPol = require("./hyperledgerFed");
+var hyperledgerFed = require("./hyperledger/hyperledgerFed");
 
 var ini = require('ini');
 
@@ -27,7 +27,7 @@ var config = ini.parse(fs.readFileSync('./config.ini', 'utf-8'))
 blockchain = config.blockchain;
 module.exports.create = function(req,res){		
 	if(blockchain == "hyperledger"){		
-		hyperledgerPol.create(req,res);
+		hyperledgerFed.create(req,res);
 	} else {
 		res.end('hello world storing using another blockchain!!\n');
 	}
@@ -35,7 +35,7 @@ module.exports.create = function(req,res){
 
 module.exports.add = function(req,res){	    
 	if(blockchain == "hyperledger"){		
-		hyperledgerPol.add(req,res);
+		hyperledgerFed.add(req,res);
 	} else {
 		res.writeHead(200);
 		res.end('hello world reading using another blockchain!!\n');
@@ -44,7 +44,7 @@ module.exports.add = function(req,res){
 
 module.exports.remove = function(req,res){    
 	if(blockchain == "hyperledger"){		
-		hyperledgerPol.remove(req,res);
+		hyperledgerFed.remove(req,res);
 	} else {
 		res.writeHead(200);
 		res.end('hello world deleting using another blockchain!!\n');
@@ -53,7 +53,7 @@ module.exports.remove = function(req,res){
 
 module.exports.read = function(req,res){	    
 	if(blockchain == "hyperledger"){		
-		hyperledgerPol.read(req,res);
+		hyperledgerFed.read(req,res);
 	} else {
 		res.writeHead(200);
 		res.end('hello world deleting using another blockchain!!\n');

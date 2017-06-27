@@ -17,7 +17,7 @@ var https = require('https');
 var http = require('http');
 var fs = require('fs');
 var url = require( "url" );
-var hyperledgerState = require("./hyperledgerState");
+var hyperledgerState = require("./hyperledger/hyperledgerState");
 
 var ini = require('ini');
 

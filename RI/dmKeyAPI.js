@@ -17,7 +17,7 @@ var https = require('https');
 var http = require('http');
 var fs = require('fs');
 var url = require( "url" );
-var hyperledgerPol = require("./hyperledgerDMKey");
+var hyperledgerDMKey = require("./hyperledger/hyperledgerDMKey");
 
 var ini = require('ini');
 
@@ -26,7 +26,7 @@ var config = ini.parse(fs.readFileSync('./config.ini', 'utf-8'))
 blockchain = config.blockchain;
 module.exports.register = function(req,res){		
 	if(blockchain == "hyperledger"){		
-		hyperledgerPol.register(req,res);
+		hyperledgerDMKey.register(req,res);
 	} else {
 		res.end('hello world storing using another blockchain!!\n');
 	}
@@ -34,7 +34,7 @@ module.exports.register = function(req,res){
 
 module.exports.read = function(req,res){	    
 	if(blockchain == "hyperledger"){		
-		hyperledgerPol.read(req,res);
+		hyperledgerDMKey.read(req,res);
 	} else {
 		res.writeHead(200);
 		res.end('hello world reading using another blockchain!!\n');
@@ -43,7 +43,7 @@ module.exports.read = function(req,res){
 
 module.exports.update = function(req,res){	    
 	if(blockchain == "hyperledger"){		
-		hyperledgerPol.update(req,res);
+		hyperledgerDMKey.update(req,res);
 	} else {
 		res.writeHead(200);
 		res.end('hello world updating using another blockchain!!\n');
@@ -52,7 +52,7 @@ module.exports.update = function(req,res){
 
 module.exports.delete = function(req,res){	    
 	if(blockchain == "hyperledger"){		
-		hyperledgerPol.delete(req,res);
+		hyperledgerDMKey.delete(req,res);
 	} else {
 		res.writeHead(200);
 		res.end('hello world deleting using another blockchain!!\n');
