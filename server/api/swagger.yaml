@@ -1,0 +1,450 @@
+---
+swagger: "2.0"
+info:
+  version: "2.1.0"
+  title: "SUNFISH Registry Interface"
+  contact:
+    name: "Andrea Margheri"
+    email: "a.margheri@soton.ac.uk"
+basePath: "/ri"
+tags:
+- name: "policy"
+- name: "dm"
+- name: "anony"
+- name: "contract"
+- name: "alert"
+- name: "monitoring"
+- name: "sla"
+- name: "state"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+paths:
+  /policy/store:
+    post:
+      tags:
+      - "policy"
+      description: "Storing a new policy\n"
+      operationId: "policyStorePOST"
+      parameters:
+      - in: "body"
+        name: "policySpec"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/policy-request-body"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/policy-response"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+        409:
+          description: "The operation is not allowed as the policy already exists."
+      x-swagger-router-controller: "Policy"
+  /policy/read:
+    post:
+      tags:
+      - "policy"
+      description: "Retrieving a policy by its id\n"
+      operationId: "policyReadPOST"
+      parameters:
+      - in: "body"
+        name: "policyId"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/query-request"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/policy-response"
+        400:
+          description: "Invalid request, required parameter(s) missing"
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+        404:
+          description: "The requested policy is not found."
+      x-swagger-router-controller: "Policy"
+  /policy/polService:
+    post:
+      tags:
+      - "policy"
+      description: "Retrieving policies associated to a service\n"
+      operationId: "policyPolServicePOST"
+      parameters:
+      - in: "body"
+        name: "serviceId"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/policy-ofservice-body"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/policy-ofservice-response"
+        400:
+          description: "Invalid request, required parameter(s) missing"
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "Policy"
+  /policy/update:
+    post:
+      tags:
+      - "policy"
+      description: "Updating a policy by its id.\n"
+      operationId: "policyUpdatePOST"
+      parameters:
+      - in: "body"
+        name: "policySpec"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/policy-request-body"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/ack-response"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+        404:
+          description: "The respective policy is not found."
+      x-swagger-router-controller: "Policy"
+  /policy/delete:
+    post:
+      tags:
+      - "policy"
+      description: "Deleting a policy by its id\n"
+      operationId: "policyDeletePOST"
+      parameters:
+      - in: "body"
+        name: "policyId"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/query-request"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/ack-response"
+        400:
+          description: "Invalid request, required parameter(s) missing"
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+        404:
+          description: "The respective policy is not found."
+      x-swagger-router-controller: "Policy"
+  /dm/store:
+    post:
+      tags:
+      - "dm"
+      description: "Storing encryption/tokenization key\n"
+      operationId: "dmStorePOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/dm-store-body"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/ack-response"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "Dm"
+  /dm/read:
+    post:
+      tags:
+      - "dm"
+      description: "Retrieving a stored key\n"
+      operationId: "dmReadPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/query-request"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/dm-read-response"
+        400:
+          description: "Invalid request, required parameter(s) missing"
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "Dm"
+  /dm/update:
+    post:
+      tags:
+      - "dm"
+      description: "Update a stored key\n"
+      operationId: "dmUpdatePOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/dm-update-body"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/ack-response"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "Dm"
+  /dm/delete:
+    post:
+      tags:
+      - "dm"
+      description: "Delete a stored key\n"
+      operationId: "dmDeletePOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/dm-delete-body"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/ack-response"
+        400:
+          description: "Invalid request, required parameter(s) missing"
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "Dm"
+definitions:
+  policy-request-body:
+    type: "object"
+    required:
+    - "expirationTime"
+    - "id"
+    - "policy"
+    - "requestorID"
+    - "token"
+    properties:
+      requestorID:
+        type: "string"
+        description: "Identifier of the requesting entity."
+      token:
+        type: "string"
+        description: "A crypto token to validate if the entity is allowed to perform\
+          \ the requested operation."
+      policy:
+        type: "string"
+        description: "Base64-encoded policy data."
+      expirationTime:
+        type: "string"
+        description: "Specifies the expiration time of the policy in milli-seconds\
+          \ starting from midnight, January 1, 1970 UTC. After this time the policy\
+          \ set must not be used."
+      id:
+        type: "string"
+        description: "The identifer for the policy."
+      serviceID:
+        type: "string"
+        description: "The identifier of the service this policy applies to."
+      policyType:
+        type: "string"
+        description: "The type of the policy."
+    description: "HTTP body defining the input for the store operation of policy"
+  policy-ofservice-body:
+    type: "object"
+    required:
+    - "policyType"
+    - "requestorID"
+    - "serviceID"
+    - "token"
+    properties:
+      requestorID:
+        type: "string"
+        description: "Identifier of the requesting entity."
+      token:
+        type: "string"
+        description: "A crypto token to validate if the entity is allowed to perform\
+          \ the requested operation."
+      serviceID:
+        type: "string"
+        description: "Specifies the service identifier to be used to retrieve the\
+          \ set of policies belonging to that identifier."
+      policyType:
+        type: "string"
+        description: "The type of the policy."
+    description: "HTTP body defining the read operation for the /read endpoint"
+  policy-response:
+    type: "object"
+    required:
+    - "expirationTime"
+    - "policy"
+    properties:
+      policy:
+        type: "string"
+        description: "BASE64-enocded data of the requested policy."
+      expirationTime:
+        type: "string"
+        description: "Specifies the expiration time of the policy set in milliseconds\
+          \ starting from midnight, January 1, 1970 UTC. After this time the policy\
+          \ set must not be used."
+    description: "HTTP response for a successful read operation"
+  policy-ofservice-response:
+    type: "object"
+    required:
+    - "list"
+    properties:
+      list:
+        type: "array"
+        items:
+          $ref: "#/definitions/policyofserviceresponse_list"
+    description: "HTTP response containing the list of policies for the service."
+  dm-store-body:
+    type: "object"
+    required:
+    - "dataID"
+    - "key"
+    - "requestorID"
+    - "timestamp"
+    - "token"
+    properties:
+      requestorID:
+        type: "string"
+        description: "Identifier of the requesting entity."
+      token:
+        type: "string"
+        description: "A crypto token to validate if the entity is allowed to perform\
+          \ the requested operation."
+      timestamp:
+        type: "string"
+        description: "timestamp of registering the key."
+      dataID:
+        type: "string"
+        description: "Identifier of the dataset that the key relates to."
+      key:
+        type: "string"
+        description: "Key to be registered."
+  dm-update-body:
+    type: "object"
+    required:
+    - "index"
+    - "key"
+    - "requestorID"
+    - "token"
+    properties:
+      requestorID:
+        type: "string"
+        description: "Identifier of the requesting entity."
+      token:
+        type: "string"
+        description: "A crypto token to validate if the entity is allowed to perform\
+          \ the requested operation."
+      index:
+        type: "integer"
+        description: "Identifier of the key."
+      key:
+        type: "string"
+        description: "The new key."
+  dm-delete-body:
+    type: "object"
+    required:
+    - "index"
+    - "requestorID"
+    - "token"
+    properties:
+      requestorID:
+        type: "string"
+        description: "Identifier of the requesting entity."
+      token:
+        type: "string"
+        description: "A crypto token to validate if the entity is allowed to perform\
+          \ the requested operation."
+      index:
+        type: "integer"
+        description: "Identifier of the key."
+  dm-read-response:
+    type: "object"
+    required:
+    - "dataID"
+    - "key"
+    - "timestamp"
+    properties:
+      timestamp:
+        type: "string"
+        description: "The timestamp of registering the key."
+      dataID:
+        type: "string"
+        description: "Identifier of the dataset."
+      key:
+        type: "string"
+        description: "The requested public key."
+    description: "HTTP response for a successful read operation"
+  query-request:
+    type: "object"
+    required:
+    - "id"
+    - "requestorID"
+    - "token"
+    properties:
+      requestorID:
+        type: "string"
+        description: "Identifier of the requesting entity."
+      token:
+        type: "string"
+        description: "A crypto token to validate if the entity is allowed to perform\
+          \ the requested operation."
+      id:
+        type: "integer"
+        description: "Identifier of the element of interest"
+    description: "HTTP body defining the read operation for the /read endpoint"
+  ack-response:
+    type: "object"
+    required:
+    - "message"
+    properties:
+      message:
+        type: "string"
+        description: "A message signifying that the request action has been successfully\
+          \ executed"
+    description: "HTTP response for a successful store operation"
+  policyofserviceresponse_list:
+    required:
+    - "id"
+    - "policy"
+    properties:
+      id:
+        type: "string"
+        description: "Specifies the id of the policy."
+      policy:
+        type: "string"
+        description: "BASE64-enocded data of the policy."
