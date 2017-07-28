@@ -47,6 +47,12 @@ exports.dmStorePOST = function(args, res, next) {
    * body Dm-store-body Body in JSON
    * returns ack-response
    **/
+  var body_post = {};
+  body_post['application/json'] = {"key": "string", "value": "string"};
+
+  var request = require('request');
+  request.post('http://localhost:8081/put', body_post);
+
   var examples = {};
   examples['application/json'] = {
   "message" : "aeiou"
