@@ -246,6 +246,104 @@ paths:
           description: "The operation is not allowed (unauthorised access, the token\
             \ is invalid, etc.)."
       x-swagger-router-controller: "Dm"
+  /anonymisation/register:
+    post:
+      tags:
+      - "anonymisation"
+      description: "This endpoint is used to register a data-sharing event.\n"
+      operationId: "anonymisationRegisterPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/anony-register-body"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/anony-register-response"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "Anonymisation"
+  /anonymisation/statistics:
+    post:
+      tags:
+      - "anonymisation"
+      description: "This endpoint is used to query the anonymised statistical result\
+        \ given  the DataId and requested budget.\n"
+      operationId: "anonymisationStatisticsPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/anony-query-body"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/anony-query-response"
+        400:
+          description: "Invalid request, required parameter(s) missing"
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)"
+      x-swagger-router-controller: "Anonymisation"
+  /SLAMetrics/store:
+    post:
+      tags:
+      - "sla"
+      description: "This endpoint is used to store performance metrics.\n"
+      operationId: "sLAMetricsStorePOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/sla-store-body"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/sla-store-response"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "Sla"
+  /SLAMetrics/read:
+    post:
+      tags:
+      - "sla"
+      description: "This endpoint is used to retrieve the stored metrics using the\
+        \ index.\n"
+      operationId: "sLAMetricsReadPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/sla-read-body"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/sla-read-response"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "Sla"
 definitions:
   policy-request-body:
     type: "object"
@@ -409,6 +507,259 @@ definitions:
         type: "string"
         description: "The requested public key."
     description: "HTTP response for a successful read operation"
+  anony-register-body:
+    type: "object"
+    required:
+    - "dataID"
+    - "data_consumer"
+    - "data_provider"
+    - "requestorID"
+    - "timeStamp"
+    - "token"
+    properties:
+      requestorID:
+        type: "string"
+        description: "Identifier of the requesting entity."
+      token:
+        type: "string"
+        description: "A crypto token to validate if the entity is allowed to perform\
+          \ the requested operation."
+      data_provider:
+        type: "string"
+        description: "The name of the data provider who shares a dataset."
+      data_consumer:
+        type: "string"
+        description: "The name of the data consumer who receives a dataset."
+      timeStamp:
+        type: "string"
+        description: "The timestamp in the following format - \"2006-01-02 15:04:05\""
+      dataID:
+        type: "string"
+        description: "Identifier of the shared dataset."
+    description: "HTTP body defining the register operation for the /anonymisation/register\
+      \ endpoint."
+  anony-register-response:
+    type: "object"
+    required:
+    - "message"
+    properties:
+      message:
+        type: "string"
+        description: "a message in JSON format signifying that the data has been registered."
+    description: "HTTP response for a successful register operation"
+  anony-query-body:
+    type: "object"
+    required:
+    - "dataID"
+    - "data_consumer"
+    - "function_type"
+    - "request_budget"
+    - "requestorID"
+    - "token"
+    properties:
+      requestorID:
+        type: "string"
+        description: "Identifier of the requesting entity."
+      token:
+        type: "string"
+        description: "A crypto token to validate if the entity is allowed to perform\
+          \ the requested operation."
+      data_consumer:
+        type: "string"
+        description: "The name of the data consumer who receives a dataset."
+      dataID:
+        type: "string"
+        description: "The unique ID of a dataset"
+      function_type:
+        type: "string"
+        description: "The queried function type"
+      request_budget:
+        type: "number"
+        description: "The requested budget of differential privacy"
+    description: "HTTP body defining the query operation for the /anonymisation/statistics\
+      \ endpoint"
+  anony-query-response:
+    type: "object"
+    required:
+    - "anonymised_result"
+    - "dataID"
+    - "data_consumer"
+    - "data_provider"
+    - "timeStamp"
+    properties:
+      data_provider:
+        type: "string"
+        description: "The name of the data provider who shares a dataset."
+      data_consumer:
+        type: "string"
+        description: "The name of the data consumer who receives a dataset."
+      timeStamp:
+        type: "string"
+        description: "The timestamp in the following format - \"2006-01-02 15:04:05\""
+      dataID:
+        type: "string"
+        description: "Identifier of the shared dataset."
+      anonymised_result:
+        type: "number"
+        description: "The anonymised result of the query function"
+    description: "HTTP response for a successful read operation"
+  sla-store-body:
+    type: "object"
+    required:
+    - "CPUPower"
+    - "availability"
+    - "bandwidth"
+    - "connections"
+    - "diskSpace"
+    - "elasticity"
+    - "memorySize"
+    - "requestorID"
+    - "responseTime"
+    - "throughput"
+    - "timeStamp"
+    - "token"
+    properties:
+      requestorID:
+        type: "string"
+        description: "Identifier of the requesting entity."
+      timeStamp:
+        type: "string"
+        description: "The timestamp in the following format - \"2006-01-02 15:04:05\"\
+          ."
+      token:
+        type: "string"
+        description: "A crypto token to validate if the entity is allowed to perform\
+          \ the requested operation."
+      availability:
+        type: "string"
+        description: "The percentage availability of the cloud member resources for\
+          \ a billing cycle."
+      responseTime:
+        type: "string"
+        description: "Exact time (seconds) between stimulus to the cloud service and\
+          \ corresponding service's response. The percentage a service manages to\
+          \ respond within the defined response time limit for a billing cycle."
+      CPUPower:
+        type: "string"
+        description: "Max. no. of processing power (Hertz) provided by CSP to customer\
+          \ to process his data."
+      diskSpace:
+        type: "string"
+        description: "Max. no. of available space (PetaBytes) provided by CSP to customer\
+          \ to store his data."
+      memorySize:
+        type: "string"
+        description: "Max. no. of information (GigaBytes) the cloud service is able\
+          \ to hold for the customer to read/write his data."
+      bandwidth:
+        type: "string"
+        description: "Amount of outbound data transfers (GigaByte/month), customers\
+          \ will be given the ability to customize the cloud services, and corresponding\
+          \ SLAs, according to the demand and usage of the services."
+      throughput:
+        type: "string"
+        description: "Min. no. of requests that can be processed by the cloud service\
+          \ in a stated time period (GigaBytes/sec)."
+      connections:
+        type: "string"
+        description: "Max. no. of simultaneous connections."
+      elasticity:
+        type: "string"
+        description: "Quickly de/provision resources, dynamically adjust the amount\
+          \ of resources allocated to an instance of a service (seconds to react)."
+    description: "HTTP body defining the store operation for the /store endpoint."
+  sla-read-body:
+    type: "object"
+    required:
+    - "index"
+    - "requestorID"
+    - "token"
+    properties:
+      requestorID:
+        type: "string"
+        description: "Identifier of the requesting entity."
+      token:
+        type: "string"
+        description: "A crypto token to validate if the entity is allowed to perform\
+          \ the requested operation."
+      index:
+        type: "integer"
+        description: "Index of the requested data as provided during the store operation."
+    description: "HTTP body defining the read operation for the /read endpoint."
+  sla-store-response:
+    type: "object"
+    required:
+    - "index"
+    properties:
+      index:
+        type: "integer"
+        description: "index of the stored metrics."
+    description: "HTTP response for a successful store operation."
+  sla-read-response:
+    type: "object"
+    required:
+    - "CPUPower"
+    - "availability"
+    - "bandwidth"
+    - "connections"
+    - "diskSpace"
+    - "elasticity"
+    - "memorySize"
+    - "requestorID"
+    - "responseTime"
+    - "throughput"
+    - "timeStamp"
+    - "token"
+    properties:
+      requestorID:
+        type: "string"
+        description: "Identifier of the requesting entity."
+      timeStamp:
+        type: "string"
+        description: "The timestamp in the following format - \"2006-01-02 15:04:05\"\
+          ."
+      token:
+        type: "string"
+        description: "A crypto token to validate if the entity is allowed to perform\
+          \ the requested operation."
+      availability:
+        type: "string"
+        description: "The percentage availability of the cloud member resources for\
+          \ a billing cycle."
+      responseTime:
+        type: "string"
+        description: "Exact time (seconds) between stimulus to the cloud service and\
+          \ corresponding service's response. The percentage a service manages to\
+          \ respond within the defined response time limit for a billing cycle."
+      CPUPower:
+        type: "string"
+        description: "Max. no. of processing power (Hertz) provided by CSP to customer\
+          \ to process his data."
+      diskSpace:
+        type: "string"
+        description: "Max. no. of available space (PetaBytes) provided by CSP to customer\
+          \ to store his data."
+      memorySize:
+        type: "string"
+        description: "Max. no. of information (GigaBytes) the cloud service is able\
+          \ to hold for the customer to read/write his data."
+      bandwidth:
+        type: "string"
+        description: "Amount of outbound data transfers (GigaByte/month), customers\
+          \ will be given the ability to customize the cloud services, and corresponding\
+          \ SLAs, according to the demand and usage of the services."
+      throughput:
+        type: "string"
+        description: "Min. no. of requests that can be processed by the cloud service\
+          \ in a stated time period (GigaBytes/sec)."
+      connections:
+        type: "string"
+        description: "Max. no. of simultaneous connections."
+      elasticity:
+        type: "string"
+        description: "Quickly de/provision resources, dynamically adjust the amount\
+          \ of resources allocated to an instance of a service (seconds to react)."
+    description: "HTTP response for a successful read operation."
   query-request:
     type: "object"
     required:

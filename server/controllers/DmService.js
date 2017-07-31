@@ -51,12 +51,14 @@ exports.dmStorePOST = function(args, res, next) {
   body_post['application/json'] = {"key": "string", "value": "string"};
 
   var request = require('request');
-  request.post('http://localhost:8081/put', body_post);
-
+  request.post('http://localhost:8081/put', body_post);	
+	
+	
   var examples = {};
   examples['application/json'] = {
   "message" : "aeiou"
 };
+	
   if (Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
