@@ -75,12 +75,40 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
 
+  /anonymisation/receiveAnonyRes:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: anonymisationRI
+    post:
+      description: this endpoint is used to receive anonymised result from the anonymisation interface
+      # used as the method name of the controller
+      tags: 
+        - anonymisation
+      operationId: receiveAnonyRes
+      parameters:
+        - name: body
+          in: body
+          description: JSON body of the query input
+          required: true
+          schema: 
+            $ref: "#/definitions/AnonyResultBody"
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/ReceiveResultResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
 definitions:
 
   RegisterBody:
     type: object
     description: HTTP body defining the register operation for the 
-                  /anonymisation/interface/register endpoint.
+                  /ri/anonymisation/register endpoint.
     required:
       - requestorID
       - token
@@ -119,10 +147,61 @@ definitions:
         type: string
         description: a message in JSON format signifying that the data has been registered
 
+  AnonyResultBody:
+    type: object
+    description: HTTP body definiting the query operation for the 
+                  /ri/anonymisation/receiveAnonyRes endpoint
+    required:
+      - requestorID
+      - token
+      - data_consumer
+      - dataID
+      - function_type
+      - budget_used
+      - anonymised_result
+    properties:
+      requestorID:
+        type: string
+        description: Indentifier of the requesting body
+      token:
+        type: string
+        description: a crypto token to validate if the entity is allowed to perform the 
+                      requested operation.
+      data_consumer: 
+        type: string
+        description: the name of the data consumer who receives a dataset
+      dataID:
+        type: string
+        description: the unique ID of a dataset
+      function_type:
+        type: string
+        description: the queried function type
+      budget_used: 
+        type: number
+        description: the budget used of differential privacy
+      anonymised_result:
+        type: number
+        description: the anonymised result from anonymisation interface
+
+  ReceiveResultResponse:
+    type: object
+    description: HTTP response definiting the query operation for the 
+                  /ri/anonymisation/receiveAnonyRes endpoint
+    required:
+      - final_status
+      - final_result
+    properties:
+      final_status: 
+        type: number
+        description: the statue of the final result (0 -- null result)
+      final_result:
+        type: number
+        description: the anonymised result from anonymisation interface
+
   QueryBody:
     type: object
     description: HTTP body definiting the query operation for the 
-                  /anonymisation/interface/query endpoint
+                  /ri/anonymisation/queryOldRes endpoint
     required:
       - requestorID
       - token
