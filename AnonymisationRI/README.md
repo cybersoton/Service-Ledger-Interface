@@ -1,1 +1,1 @@
-# Skeleton project for Swagger
+# Registry Interface - Anonymisation Part 
