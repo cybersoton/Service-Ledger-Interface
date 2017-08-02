@@ -15,7 +15,3 @@ module.exports.dmReadPOST = function dmReadPOST (req, res, next) {
 module.exports.dmStorePOST = function dmStorePOST (req, res, next) {
   Dm.dmStorePOST(req.swagger.params, res, next);
 };
-
-module.exports.dmUpdatePOST = function dmUpdatePOST (req, res, next) {
-  Dm.dmUpdatePOST(req.swagger.params, res, next);
-};

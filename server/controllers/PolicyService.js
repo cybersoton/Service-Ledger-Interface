@@ -81,22 +81,3 @@ exports.policyStorePOST = function(args, res, next) {
   }
 }
 
-exports.policyUpdatePOST = function(args, res, next) {
-  /**
-   * Updating a policy by its id. 
-   *
-   * policySpec Policy-request-body Body in JSON
-   * returns ack-response
-   **/
-  var examples = {};
-  examples['application/json'] = {
-  "message" : "aeiou"
-};
-  if (Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-    res.end();
-  }
-}
-

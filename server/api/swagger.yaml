@@ -97,32 +97,6 @@ paths:
           description: "The operation is not allowed (unauthorised access, the token\
             \ is invalid, etc.)."
       x-swagger-router-controller: "Policy"
-  /policy/update:
-    post:
-      tags:
-      - "policy"
-      description: "Updating a policy by its id.\n"
-      operationId: "policyUpdatePOST"
-      parameters:
-      - in: "body"
-        name: "policySpec"
-        description: "Body in JSON"
-        required: true
-        schema:
-          $ref: "#/definitions/policy-request-body"
-      responses:
-        200:
-          description: "The response body for a successful response."
-          schema:
-            $ref: "#/definitions/ack-response"
-        400:
-          description: "Invalid request, required parameter(s) missing."
-        401:
-          description: "The operation is not allowed (unauthorised access, the token\
-            \ is invalid, etc.)."
-        404:
-          description: "The respective policy is not found."
-      x-swagger-router-controller: "Policy"
   /policy/delete:
     post:
       tags:
@@ -195,30 +169,6 @@ paths:
             $ref: "#/definitions/dm-read-response"
         400:
           description: "Invalid request, required parameter(s) missing"
-        401:
-          description: "The operation is not allowed (unauthorised access, the token\
-            \ is invalid, etc.)."
-      x-swagger-router-controller: "Dm"
-  /dm/update:
-    post:
-      tags:
-      - "dm"
-      description: "Update a stored key\n"
-      operationId: "dmUpdatePOST"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "Body in JSON"
-        required: true
-        schema:
-          $ref: "#/definitions/dm-update-body"
-      responses:
-        200:
-          description: "The response body for a successful response."
-          schema:
-            $ref: "#/definitions/ack-response"
-        400:
-          description: "Invalid request, required parameter(s) missing."
         401:
           description: "The operation is not allowed (unauthorised access, the token\
             \ is invalid, etc.)."
@@ -452,27 +402,6 @@ definitions:
       key:
         type: "string"
         description: "Key to be registered."
-  dm-update-body:
-    type: "object"
-    required:
-    - "index"
-    - "key"
-    - "requestorID"
-    - "token"
-    properties:
-      requestorID:
-        type: "string"
-        description: "Identifier of the requesting entity."
-      token:
-        type: "string"
-        description: "A crypto token to validate if the entity is allowed to perform\
-          \ the requested operation."
-      index:
-        type: "integer"
-        description: "Identifier of the key."
-      key:
-        type: "string"
-        description: "The new key."
   dm-delete-body:
     type: "object"
     required:

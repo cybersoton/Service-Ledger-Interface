@@ -19,7 +19,3 @@ module.exports.policyReadPOST = function policyReadPOST (req, res, next) {
 module.exports.policyStorePOST = function policyStorePOST (req, res, next) {
   Policy.policyStorePOST(req.swagger.params, res, next);
 };
-
-module.exports.policyUpdatePOST = function policyUpdatePOST (req, res, next) {
-  Policy.policyUpdatePOST(req.swagger.params, res, next);
-};
