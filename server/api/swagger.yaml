@@ -201,7 +201,7 @@ paths:
       tags:
       - "anonymisation"
       description: "This endpoint is used to register a data-sharing event.\n"
-      operationId: "anonymisationRegisterPOST"
+      operationId: "registerToRegistry"
       parameters:
       - in: "body"
         name: "body"
@@ -220,13 +220,13 @@ paths:
           description: "The operation is not allowed (unauthorised access, the token\
             \ is invalid, etc.)."
       x-swagger-router-controller: "Anonymisation"
-  /anonymisation/statistics:
+  /anonymisation/queryOldRes:
     post:
       tags:
       - "anonymisation"
-      description: "This endpoint is used to query the anonymised statistical result\
+      description: "This endpoint is used to query the anonymised statistical result in Registry\
         \ given  the DataId and requested budget.\n"
-      operationId: "anonymisationStatisticsPOST"
+      operationId: "queryOldRes"
       parameters:
       - in: "body"
         name: "body"
@@ -245,6 +245,32 @@ paths:
           description: "The operation is not allowed (unauthorised access, the token\
             \ is invalid, etc.)"
       x-swagger-router-controller: "Anonymisation"
+  
+  /anonymisation/receiveAnonyRes:
+    post:
+      description: this endpoint is used to receive anonymised result from the anonymisation interface
+      tags:
+        - anonymisation
+      operationId: reeciveAnonyRes
+      parameters:
+        - name: body
+          in: body
+          description: JSON body of the received result
+          required: true
+          schema:
+            $ref: "#/definitions/anony-result-body"
+      response:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/receive-result-response"
+        400:
+          description: "Invalid request, required parameter(s) missing"
+        401:
+          description: "The operation is not allowed (unauthorised access, the token \
+                        \ is invalid, etc.)"
+      x-swagger-router-controller: "Anonymisation"
+
   /SLAMetrics/store:
     post:
       tags:
@@ -294,6 +320,7 @@ paths:
           description: "The operation is not allowed (unauthorised access, the token\
             \ is invalid, etc.)."
       x-swagger-router-controller: "Sla"
+
 definitions:
   policy-request-body:
     type: "object"
@@ -439,12 +466,12 @@ definitions:
   anony-register-body:
     type: "object"
     required:
-    - "dataID"
-    - "data_consumer"
-    - "data_provider"
     - "requestorID"
-    - "timeStamp"
     - "token"
+    - "data_provider"
+    - "data_consumer"
+    - "timeStamp"
+    - "dataID"
     properties:
       requestorID:
         type: "string"
@@ -479,12 +506,12 @@ definitions:
   anony-query-body:
     type: "object"
     required:
-    - "dataID"
-    - "data_consumer"
-    - "function_type"
-    - "request_budget"
     - "requestorID"
     - "token"
+    - "data_consumer"
+    - "dataID"
+    - "function_type"
+    - "request_budget"
     properties:
       requestorID:
         type: "string"
@@ -505,16 +532,17 @@ definitions:
       request_budget:
         type: "number"
         description: "The requested budget of differential privacy"
-    description: "HTTP body defining the query operation for the /anonymisation/statistics\
+    description: "HTTP body defining the query operation for the /anonymisation/queryOldRes\
       \ endpoint"
   anony-query-response:
     type: "object"
     required:
-    - "anonymised_result"
-    - "dataID"
-    - "data_consumer"
     - "data_provider"
-    - "timeStamp"
+    - "data_consumer"
+    - "time_stamp"
+    - "dataID"
+    - "ifExist"
+    - "budget_used"
     properties:
       data_provider:
         type: "string"
@@ -522,16 +550,71 @@ definitions:
       data_consumer:
         type: "string"
         description: "The name of the data consumer who receives a dataset."
-      timeStamp:
+      time_stamp:
         type: "string"
         description: "The timestamp in the following format - \"2006-01-02 15:04:05\""
       dataID:
         type: "string"
         description: "Identifier of the shared dataset."
-      anonymised_result:
+      ifExist:
         type: "number"
-        description: "The anonymised result of the query function"
+        description: 0 -- old result does not exist; otherwise -- 1
+      budget_used:
+        type: "number"
+        description: budget consumed
     description: "HTTP response for a successful read operation"
+
+  anony-result-body:
+    type: object
+    description: HTTP body definiting the query operation for the 
+                  /ri/anonymisation/receiveAnonyRes endpoint
+    required:
+      - requestorID
+      - token
+      - data_consumer
+      - dataID
+      - function_type
+      - budget_used
+      - anonymised_result
+    properties:
+      requestorID:
+        type: string
+        description: Indentifier of the requesting body
+      token:
+        type: string
+        description: a crypto token to validate if the entity is allowed to perform the 
+                      requested operation.
+      data_consumer: 
+        type: string
+        description: the name of the data consumer who receives a dataset
+      dataID:
+        type: string
+        description: the unique ID of a dataset
+      function_type:
+        type: string
+        description: the queried function type
+      budget_used: 
+        type: number
+        description: the budget used of differential privacy
+      anonymised_result:
+        type: number
+        description: the anonymised result from anonymisation interface
+
+  receive-result-response:
+    type: object
+    description: HTTP response definiting the query operation for the 
+                  /ri/anonymisation/receiveAnonyRes endpoint
+    required:
+      - final_status
+      - final_result
+    properties:
+      final_status: 
+        type: number
+        description: the statue of the final result (0 -- null result)
+      final_result:
+        type: number
+        description: the anonymised result from anonymisation interface
+        
   sla-store-body:
     type: "object"
     required:
