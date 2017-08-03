@@ -5,10 +5,15 @@ var assert = require('assert');
 var http = require('http');
 var swaggerTools = require('swagger-tools');
 var jsyaml = require('js-yaml');
+<<<<<<< HEAD
 var fs = require('fs'),
 	path = require('path'),
 	http = require('http');
 var serverPort = 8080;
+=======
+var fs = require('fs');
+var serverPort = 60001;
+>>>>>>> 3acd2a447f1d7e8e16b784ef9903360d56ad678d
 
 // registry configuration
 var config = require('config');
