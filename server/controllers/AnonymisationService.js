@@ -1,6 +1,6 @@
 'use strict';
 
-var request = require('require-promise');
+var request = require('request-promise');
 
 exports.registerToRegistry = function(args, res, next) {
   /**
@@ -47,10 +47,11 @@ exports.queryOldRes = function(args, res, next) {
 
 exports.receiveAnonyRes = function(args, res, next) {
   /**
-   * This endpoint is used to query the anonymised statistical result given  the DataId and requested budget. 
+   * This endpoint is used to receive the result from the Anonymisation
+   * Interface.
    *
-   * body Anony-query-body Body in JSON
-   * returns anony-query-response
+   * body receive-anony-res body in JSON
+   * returns receive-anony-res-response
    **/
   var examples = {};
   examples['application/json'] = {

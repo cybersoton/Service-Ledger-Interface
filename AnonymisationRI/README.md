@@ -1,1 +1,0 @@
-# Registry Interface - Anonymisation Part 

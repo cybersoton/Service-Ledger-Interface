@@ -251,7 +251,7 @@ paths:
       description: this endpoint is used to receive anonymised result from the anonymisation interface
       tags:
         - anonymisation
-      operationId: reeciveAnonyRes
+      operationId: receiveAnonyRes
       parameters:
         - name: body
           in: body
