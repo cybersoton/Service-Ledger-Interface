@@ -259,7 +259,7 @@ paths:
           required: true
           schema:
             $ref: "#/definitions/anony-result-body"
-      response:
+      responses:
         200:
           description: Success
           schema:
