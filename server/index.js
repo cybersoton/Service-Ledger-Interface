@@ -1,11 +1,17 @@
 'use strict';
 
 var app = require('connect')();
+var assert = require('assert');
 var http = require('http');
 var swaggerTools = require('swagger-tools');
 var jsyaml = require('js-yaml');
-var fs = require('fs');
+var fs = require('fs'),
+	path = require('path'),
+	http = require('http');
 var serverPort = 8080;
+
+// registry configuration
+var config = require('config');
 
 // swaggerRouter configuration
 var options = {

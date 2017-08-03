@@ -1,0 +1,5 @@
+#info for reaching the registry
+registry:
+   ip: localhost
+   port: 60005
+   
