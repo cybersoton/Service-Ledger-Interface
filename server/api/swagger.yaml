@@ -470,7 +470,7 @@ definitions:
     - "token"
     - "data_provider"
     - "data_consumer"
-    - "timeStamp"
+    - "time_stamp"
     - "dataID"
     properties:
       requestorID:
@@ -486,7 +486,7 @@ definitions:
       data_consumer:
         type: "string"
         description: "The name of the data consumer who receives a dataset."
-      timeStamp:
+      time_stamp:
         type: "string"
         description: "The timestamp in the following format - \"2006-01-02 15:04:05\""
       dataID:
