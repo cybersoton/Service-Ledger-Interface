@@ -3,4 +3,4 @@
 *.class
 *.log
 
-AnonymisationRI/*
+.swagger-codegen-cli.jar
