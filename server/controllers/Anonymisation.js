@@ -4,14 +4,14 @@ var url = require('url');
 
 var Anonymisation = require('./AnonymisationService');
 
-module.exports.anonymisationQueryOldResPOST = function anonymisationQueryOldResPOST (req, res, next) {
-  Anonymisation.anonymisationQueryOldResPOST(req.swagger.params, res, next);
+module.exports.anonymisationQueryOldRes = function anonymisationQueryOldRes (req, res, next) {
+  Anonymisation.anonymisationQueryOldRes(req.swagger.params, res, next);
 };
 
-module.exports.anonymisationReceiveAnonyResPOST = function anonymisationReceiveAnonyResPOST (req, res, next) {
-  Anonymisation.anonymisationReceiveAnonyResPOST(req.swagger.params, res, next);
+module.exports.anonymisationReceiveAnonyRes = function anonymisationReceiveAnonyRes (req, res, next) {
+  Anonymisation.anonymisationReceiveAnonyRes(req.swagger.params, res, next);
 };
 
-module.exports.anonymisationRegisterPOST = function anonymisationRegisterPOST (req, res, next) {
-  Anonymisation.anonymisationRegisterPOST(req.swagger.params, res, next);
+module.exports.anonymisationRegisterToRegistry = function anonymisationRegisterToRegistry (req, res, next) {
+  Anonymisation.anonymisationRegisterToRegistry(req.swagger.params, res, next);
 };

@@ -201,7 +201,7 @@ paths:
       tags:
       - "anonymisation"
       description: "This endpoint is used to register a data-sharing event.\n"
-      operationId: "anonymisationRegisterPOST"
+      operationId: "anonymisationRegisterToRegistry"
       parameters:
       - in: "body"
         name: "body"
@@ -226,7 +226,7 @@ paths:
       - "anonymisation"
       description: "This endpoint is used to query the anonymised statistical result\
         \ in Registry given  the DataId and requested budget.\n"
-      operationId: "anonymisationQueryOldResPOST"
+      operationId: "anonymisationQueryOldRes"
       parameters:
       - in: "body"
         name: "body"
@@ -251,7 +251,7 @@ paths:
       - "anonymisation"
       description: "this endpoint is used to receive anonymised result from the anonymisation\
         \ interface"
-      operationId: "anonymisationReceiveAnonyResPOST"
+      operationId: "anonymisationReceiveAnonyRes"
       parameters:
       - in: "body"
         name: "body"
