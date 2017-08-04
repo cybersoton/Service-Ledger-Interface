@@ -220,13 +220,13 @@ paths:
           description: "The operation is not allowed (unauthorised access, the token\
             \ is invalid, etc.)."
       x-swagger-router-controller: "Anonymisation"
-  /anonymisation/statistics:
+  /anonymisation/queryOldRes:
     post:
       tags:
       - "anonymisation"
       description: "This endpoint is used to query the anonymised statistical result\
-        \ given  the DataId and requested budget.\n"
-      operationId: "anonymisationStatisticsPOST"
+        \ in Registry given  the DataId and requested budget.\n"
+      operationId: "anonymisationQueryOldResPOST"
       parameters:
       - in: "body"
         name: "body"
@@ -244,6 +244,31 @@ paths:
         401:
           description: "The operation is not allowed (unauthorised access, the token\
             \ is invalid, etc.)"
+      x-swagger-router-controller: "Anonymisation"
+  /anonymisation/receiveAnonyRes:
+    post:
+      tags:
+      - "anonymisation"
+      description: "this endpoint is used to receive anonymised result from the anonymisation\
+        \ interface"
+      operationId: "anonymisationReceiveAnonyResPOST"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "JSON body of the received result"
+        required: true
+        schema:
+          $ref: "#/definitions/anony-result-body"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/receive-result-response"
+        400:
+          description: "Invalid request, required parameter(s) missing"
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \  is invalid, etc.)"
       x-swagger-router-controller: "Anonymisation"
   /SLAMetrics/store:
     post:
@@ -405,7 +430,7 @@ definitions:
     - "data_consumer"
     - "data_provider"
     - "requestorID"
-    - "timeStamp"
+    - "time_stamp"
     - "token"
     properties:
       requestorID:
@@ -421,7 +446,7 @@ definitions:
       data_consumer:
         type: "string"
         description: "The name of the data consumer who receives a dataset."
-      timeStamp:
+      time_stamp:
         type: "string"
         description: "The timestamp in the following format - \"2006-01-02 15:04:05\""
       dataID:
@@ -467,16 +492,17 @@ definitions:
       request_budget:
         type: "number"
         description: "The requested budget of differential privacy"
-    description: "HTTP body defining the query operation for the /anonymisation/statistics\
+    description: "HTTP body defining the query operation for the /anonymisation/queryOldRes\
       \ endpoint"
   anony-query-response:
     type: "object"
     required:
-    - "anonymised_result"
+    - "budget_used"
     - "dataID"
     - "data_consumer"
     - "data_provider"
-    - "timeStamp"
+    - "ifExist"
+    - "time_stamp"
     properties:
       data_provider:
         type: "string"
@@ -484,16 +510,68 @@ definitions:
       data_consumer:
         type: "string"
         description: "The name of the data consumer who receives a dataset."
-      timeStamp:
+      time_stamp:
         type: "string"
         description: "The timestamp in the following format - \"2006-01-02 15:04:05\""
       dataID:
         type: "string"
         description: "Identifier of the shared dataset."
+      ifExist:
+        type: "number"
+        description: "0 -- old result does not exist; otherwise -- 1"
+      budget_used:
+        type: "number"
+        description: "budget consumed"
+    description: "HTTP response for a successful read operation"
+  anony-result-body:
+    type: "object"
+    required:
+    - "anonymised_result"
+    - "budget_used"
+    - "dataID"
+    - "data_consumer"
+    - "function_type"
+    - "requestorID"
+    - "token"
+    properties:
+      requestorID:
+        type: "string"
+        description: "Indentifier of the requesting body"
+      token:
+        type: "string"
+        description: "a crypto token to validate if the entity is allowed to perform\
+          \ the requested operation."
+      data_consumer:
+        type: "string"
+        description: "the name of the data consumer who receives a dataset"
+      dataID:
+        type: "string"
+        description: "the unique ID of a dataset"
+      function_type:
+        type: "string"
+        description: "the queried function type"
+      budget_used:
+        type: "number"
+        description: "the budget used of differential privacy"
       anonymised_result:
         type: "number"
-        description: "The anonymised result of the query function"
-    description: "HTTP response for a successful read operation"
+        description: "the anonymised result from anonymisation interface"
+    description: "HTTP body definiting the query operation for the /ri/anonymisation/receiveAnonyRes\
+      \ endpoint"
+  receive-result-response:
+    type: "object"
+    required:
+    - "final_result"
+    - "final_status"
+    properties:
+      final_status:
+        type: "number"
+        description: "the statue of the final result (0 -- null result)"
+      final_result:
+        type: "number"
+        description: "the anonymised result from anonymisation interface"
+    description: "HTTP response definiting the query operation for the /ri/anonymisation/receiveAnonyRes\
+      \ endpoint"
   sla-store-body:
     type: "object"
     required:
