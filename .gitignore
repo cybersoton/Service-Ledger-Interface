@@ -3,4 +3,4 @@
 *.class
 *.log
 
-.swagger-codegen-cli.jar
+swagger-codegen-cli.jar
