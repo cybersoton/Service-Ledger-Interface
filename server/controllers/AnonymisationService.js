@@ -2,7 +2,7 @@
 
 var request = require('request-promise');
 
-exports.registerToRegistry = function(args, res, next) {
+exports.anonymisationRegisterToRegistry = function(args, res, next) {
   /**
    * This endpoint is used to register a data-sharing event. 
    *
@@ -21,7 +21,7 @@ exports.registerToRegistry = function(args, res, next) {
   }
 }
 
-exports.queryOldRes = function(args, res, next) {
+exports.anonymisationQueryOldRes = function(args, res, next) {
   /**
    * This endpoint is used to query the anonymised statistical result given  the DataId and requested budget. 
    *
@@ -45,7 +45,7 @@ exports.queryOldRes = function(args, res, next) {
   }
 }
 
-exports.receiveAnonyRes = function(args, res, next) {
+exports.anonymisationReceiveAnonyRes = function(args, res, next) {
   /**
    * This endpoint is used to receive the result from the Anonymisation
    * Interface.
