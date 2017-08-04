@@ -20,16 +20,55 @@ exports.dmDeletePOST = function(args, res, next) {
    * body Dm-delete-body 
    * returns ack-response
    **/
-   var examples = {};
-    examples['application/json'] = {
-    "message" : "aeiou"
-  };
-    if (Object.keys(examples).length > 0) {
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-    } else {
-      res.end();
+	//Parse the input request_body and create the body for the registry back-end	
+	var token = args.body.value.token;
+	if (!utils.tokenValidate(token)) {    
+	    res.writeHead(401);
+		res.end('The authentication token is not valid!'); 
     }
+	
+	var reqId = args.body.value.requestorID;
+	var dataId = args.body.value.dataId;
+  
+    if (reqId == undefined || dataId == undefined) {
+        res.writeHead(400);
+		res.end('Invalid request! Required parameter(s) missing');
+    }
+	
+	var body_post = {};
+    body_post = {
+		"key": reqId + '_' + dataId ,
+	};
+	 
+	// Set the headers
+	var headers = {
+	    'Content-Type': 'application/json'
+	}
+   
+	// Configure the request
+	var options = {
+	    url: registry_url + 'delete',
+	    method: 'POST',
+	    headers: headers,
+	    json: body_post
+	}
+
+	var body_reponse = {};
+
+	// Start the request
+	request(options, function (error, response, body) {
+		if (error){
+			//console.log(error)
+     		res.writeHead(400,{'Content-Type':'application/json'});
+    		res.end(JSON.stringify({'message': 'error'}));	
+		}
+	    if (!error && response.statusCode == 200) {
+	        // Print out the response body
+	        console.log(body)
+    		res.writeHead(200,{'Content-Type':'application/json'});
+    		res.end(JSON.stringify(body));
+	    }
+	})
 }
 
 
@@ -39,19 +78,62 @@ exports.dmReadPOST = function(args, res, next) {
    * Retrieving a stored key 
    *
    * body Query-request Body in JSON
-   * returns dm-read-response
+   * returns ack-response
    **/	
-  var examples = {};
-  examples['application/json'] = {
-   "key" : "aeiou",
-  };
+	
+	//Parse the input request_body and create the body for the registry back-end	
+	var token = args.body.value.token;
+	if (!utils.tokenValidate(token)) {    
+	    res.writeHead(401);
+		res.end('The authentication token is not valid!'); 
+    }
+	
+	var reqId = args.body.value.requestorID;
+	var dataId = args.body.value.dataId;
+  
+    if (reqId == undefined || dataId == undefined) {
+        res.writeHead(400);
+		res.end('Invalid request! Required parameter(s) missing');
+    }
+	
+	var body_post = {};
+    body_post = {
+		"key": reqId + '_' + dataId ,
+	};
+	 
+	// Set the headers
+	var headers = {
+	    'Content-Type': 'application/json'
+	}
+   
+	// Configure the request
+	var options = {
+	    url: registry_url + 'get',
+	    method: 'POST',
+	    headers: headers,
+	    json: body_post
+	}
 
-  if (Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-    res.end();
-  }
+	var body_reponse = {};
+
+	// Start the request
+	request(options, function (error, response, body) {
+		if (error){
+			//console.log(error)
+     		res.writeHead(400,{'Content-Type':'application/json'});
+    		res.end(JSON.stringify({'message': 'error'}));	
+		}
+	    if (!error && response.statusCode == 200) {
+	        // Print out the response body
+	        //console.log(body)
+    		res.writeHead(200,{'Content-Type':'application/json'});
+			/*
+			Decrypt the received dm key and return in the body resposne 
+			*/
+			body_reponse = { "message": utils.decrypt(body.message)};
+    		res.end(JSON.stringify(body_reponse));
+	    }
+	})
 }
 
 exports.dmStorePOST = function(args, res, next) {
@@ -100,13 +182,13 @@ exports.dmStorePOST = function(args, res, next) {
 	// Start the request
 	request(options, function (error, response, body) {
 		if (error){
-			console.log(error)
+			//console.log(error)
      		res.writeHead(400,{'Content-Type':'application/json'});
     		res.end(JSON.stringify({'message': 'error'}));	
 		}
 	    if (!error && response.statusCode == 200) {
 	        // Print out the response body
-	        console.log(body)
+	        //console.log(body)
     		res.writeHead(200,{'Content-Type':'application/json'});
     		res.end(JSON.stringify(body));
 	    }

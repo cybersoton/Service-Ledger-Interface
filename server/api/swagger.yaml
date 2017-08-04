@@ -166,7 +166,7 @@ paths:
         200:
           description: "The response body for a successful response."
           schema:
-            $ref: "#/definitions/dm-read-response"
+            $ref: "#/definitions/ack-response"
         400:
           description: "Invalid request, required parameter(s) missing"
         401:
@@ -184,7 +184,7 @@ paths:
         name: "body"
         required: true
         schema:
-          $ref: "#/definitions/dm-delete-body"
+          $ref: "#/definitions/query-request"
       responses:
         200:
           description: "The response body for a successful response."
@@ -398,15 +398,6 @@ definitions:
       key:
         type: "string"
         description: "Key to be registered."
-  dm-read-response:
-    type: "object"
-    required:
-    - "key"
-    properties:
-      key:
-        type: "string"
-        description: "The requested masking key."
-    description: "HTTP response for a successful read operation"
   anony-register-body:
     type: "object"
     required:
