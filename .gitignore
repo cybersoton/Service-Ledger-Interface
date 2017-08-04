@@ -4,5 +4,3 @@
 *.log
 
 AnonymisationRI/*
-
-.swagger-codegen-ignore
