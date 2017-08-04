@@ -398,23 +398,6 @@ definitions:
       key:
         type: "string"
         description: "Key to be registered."
-  dm-delete-body:
-    type: "object"
-    required:
-    - "dataID"
-    - "requestorID"
-    - "token"
-    properties:
-      requestorID:
-        type: "string"
-        description: "Identifier of the requesting entity."
-      token:
-        type: "string"
-        description: "A crypto token to validate if the entity is allowed to perform\
-          \ the requested operation."
-      dataID:
-        type: "string"
-        description: "Identifier of the dataset that the key relates to."
   dm-read-response:
     type: "object"
     required:
@@ -680,7 +663,7 @@ definitions:
   query-request:
     type: "object"
     required:
-    - "id"
+    - "dataId"
     - "requestorID"
     - "token"
     properties:
@@ -691,9 +674,9 @@ definitions:
         type: "string"
         description: "A crypto token to validate if the entity is allowed to perform\
           \ the requested operation."
-      id:
-        type: "integer"
-        description: "Identifier of the element of interest"
+      dataId:
+        type: "string"
+        description: "Data of interest"
     description: "HTTP body defining the read operation for the /read endpoint"
   ack-response:
     type: "object"

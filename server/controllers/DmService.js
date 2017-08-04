@@ -5,8 +5,11 @@ var config = require('config');
 var assert = require('assert');
 var registry_ip = config.get('registry.ip');
 var registry_port = config.get('registry.port');
-
+//registry url
 var registry_url = 'http://' + registry_ip + ':' + registry_port + '/' + 'r' + '/';
+
+//utils
+var utils = require('../util/utils.js');
 
 var request = require('request');
 
@@ -40,10 +43,8 @@ exports.dmReadPOST = function(args, res, next) {
    **/	
   var examples = {};
   examples['application/json'] = {
-  "dataID" : "aeiou",
-  "key" : "aeiou",
-  "timestamp" : "aeiou"
-};
+   "key" : "aeiou",
+  };
 
   if (Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
@@ -61,16 +62,32 @@ exports.dmStorePOST = function(args, res, next) {
    * returns ack-response
    **/
 
+	//Parse the input request_body and create the body for the registry back-end	
+	var token = args.body.value.token;
+	if (!utils.tokenValidate(token)) {    
+	    res.writeHead(401);
+		res.end('The authentication token is not valid!'); 
+    }
+	
+	var reqId = args.body.value.requestorID;
+	var dataId = args.body.value.dataID;
+	var key = args.body.value.key;  
+  
+    if (reqId == undefined || dataId == undefined || key == undefined) {
+        res.writeHead(400);
+		res.end('Invalid request! Required parameter(s) missing');
+    }
+	
+	var body_post = {};
+    body_post = {
+		"key": reqId + '_' + dataId ,
+		"value": utils.encrypt(key)
+	};
+	 
 	// Set the headers
 	var headers = {
 	    'Content-Type': 'application/json'
 	}
-
-	var body_post = {};
-    body_post = {
-		"key": "string",
-		"value": "string"
-	};
    
 	// Configure the request
 	var options = {
@@ -94,18 +111,6 @@ exports.dmStorePOST = function(args, res, next) {
     		res.end(JSON.stringify(body));
 	    }
 	})
-
-/*    request.post(url, body, function(result) {
-	  console.log(result);
-      res.setHeader('Content-Type', 'application/json');
-	  res.end(JSON.stringify(result));
-  	});
-    /*if (Object.keys(result).length > 0) {
-  		  res.setHeader('Content-Type', 'application/json');
-  		  res.end(JSON.stringify(result[Object.keys(result)[0]] || {}, null, 2));
-  	  } else {
-  	      res.end();
-  	  }*/
 }
 
 
