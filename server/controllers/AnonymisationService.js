@@ -2,6 +2,8 @@
 
 var request = require('request-promise');
 
+var debug = true;
+
 exports.anonymisationRegisterToRegistry = function(args, res, next) {
   /**
    * This endpoint is used to register a data-sharing event. 
@@ -9,6 +11,7 @@ exports.anonymisationRegisterToRegistry = function(args, res, next) {
    * body Anony-register-body Body in JSON
    * returns anony-register-response
    **/
+  if(debug) console.log(`--->RI: anonymisationRegisterToRegistry method called`);
   var examples = {};
   examples['application/json'] = {
   "message" : "register successfully"
@@ -28,6 +31,7 @@ exports.anonymisationQueryOldRes = function(args, res, next) {
    * body Anony-query-body Body in JSON
    * returns anony-query-response
    **/
+  if(debug) console.log("--->RI: anonymisationQueryOldRes method called!");
   var examples = {};
   examples['application/json'] = {
   "data_provider" : "test_provider",
@@ -53,9 +57,10 @@ exports.anonymisationReceiveAnonyRes = function(args, res, next) {
    * body receive-anony-res body in JSON
    * returns receive-anony-res-response
    **/
+  if(debug) console.log(`--->RI: anonymisationReceiveAnonyRes method called`);
   var examples = {};
   examples['application/json'] = {
-  "final_status": 111,
+  "final_status": 1,
   "final_result": 111
 };
   if (Object.keys(examples).length > 0) {
