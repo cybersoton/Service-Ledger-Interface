@@ -270,6 +270,30 @@ paths:
           description: "The operation is not allowed (unauthorised access, the token\
             \  is invalid, etc.)"
       x-swagger-router-controller: "Anonymisation"
+  /anonymisation/updateLedger:
+    post:
+      tags:
+      - "anonymisation"
+      description: "this endpoint is used to update final result to Registry"
+      operationId: "anonymisationUpdateLedger"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "JSON body of the received result"
+        required: true
+        schema:
+          $ref: "#/definitions/update-ledger-body"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/update-ledger-response"
+        400:
+          description: "Invalid request, required parameter(s) missing"
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \  is invalid, etc.)"
+      x-swagger-router-controller: "Anonymisation"
   /SLAMetrics/store:
     post:
       tags:
@@ -572,6 +596,41 @@ definitions:
         description: "the anonymised result from anonymisation interface"
     description: "HTTP response definiting the query operation for the /ri/anonymisation/receiveAnonyRes\
       \ endpoint"
+  update-ledger-body:
+    type: "object"
+    required:
+    - "anonymised_result"
+    - "dataID"
+    - "data_consumer"
+    - "data_provider"
+    - "time_stamp"
+    properties:
+      data_provider:
+        type: "string"
+        description: "The name of the data provider who shares a dataset."
+      data_consumer:
+        type: "string"
+        description: "The name of the data consumer who receives a dataset."
+      time_stamp:
+        type: "string"
+        description: "The timestamp in the following format - \"2006-01-02 15:04:05\""
+      dataID:
+        type: "string"
+        description: "Identifier of the shared dataset."
+      anonymised_result:
+        type: "number"
+        description: "the final anonymised result"
+    description: "HTTP body definiting the update ledger operation for the /ri/anonymisation/updateLedger\
+      \ endpoint"
+  update-ledger-response:
+    type: "string"
+    required:
+    - "message"
+    properties:
+      message:
+        type: "string"
+        description: "update ledger successfully"
+    description: "successfully update ledger message"
   sla-store-body:
     type: "object"
     required:

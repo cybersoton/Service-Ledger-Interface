@@ -15,3 +15,7 @@ module.exports.anonymisationReceiveAnonyRes = function anonymisationReceiveAnony
 module.exports.anonymisationRegisterToRegistry = function anonymisationRegisterToRegistry (req, res, next) {
   Anonymisation.anonymisationRegisterToRegistry(req.swagger.params, res, next);
 };
+
+module.exports.anonymisationUpdateLedger = function anonymisationUpdateLedger (req, res, next) {
+  Anonymisation.anonymisationUpdateLedger(req.swagger.params, res, next);
+};
