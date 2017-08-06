@@ -46,7 +46,7 @@ exports.anonymisationQueryOldRes = function(args, res, next) {
 
   var options = args.body.value;
   if(debug) {
-      console.log("---->RI send request to R [options]: ");
+      console.log("---->RI send request to Registry [options]: ");
       console.log(options);
   }
   // query the registry
@@ -71,15 +71,15 @@ exports.anonymisationQueryOldRes = function(args, res, next) {
         //if old result not exist
         examples['application/json'].ifExist = 0;
         let remain_budget = 10;
-        if(args.request_budget < remain_budge){
-            examples['application/json'].budget_used = args.request_budget;
+        if(args.body.value.request_budget < remain_budge){
+            examples['application/json'].budget_used = args.body.value.request_budget;
         } else {
             examples['application/json'].budget_used = -1;
         }
     }
   }).catch(err => {
       console.error(`---->error when request!`);
-      console.log(err);
+      // console.log(err);
   });
 
   if (Object.keys(examples).length > 0) {
@@ -104,13 +104,59 @@ exports.anonymisationReceiveAnonyRes = function(args, res, next) {
 
   var examples = {};
   examples['application/json'] = {
-  "final_status": 1,
-  "final_result": 111
-};
+     "final_status": 1,
+     "final_result": 111
+  };
   if (Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
   } else {
-    res.end();
+      res.end();
   }
 }
+
+exports.anonymisationUpdateLedger = function(args, res, next) {
+
+  if(debug) {
+      console.log(`--->RI: anonymisationUpdateLedgeer method called. args: `);
+      console.log(args.body.value);
+  }
+
+  
+  var examples = {};
+  examples['application/json'] = {
+      message: "update ledger not successfully!"
+  };
+
+  rp({
+      method: 'POST',
+      uri: 'http://localhost:60005/r/put',
+      body: {
+        "key": JSON.stringify(args.body.value),
+        "value": JSON.stringify(args.body.value)
+      },
+      header: {'User-Agent': 'Registry-Interface'},
+      json: true
+  }).then(response => {
+     examples['application/json'].message = response.message; 
+     if(debug) {
+         console.log("---->response from Registry: ");
+         console.log(response);
+     }
+  }).catch(err => console.log(err));
+
+  if(debug) console.log(Object.keys(examples).length);
+
+  if (Object.keys(examples).length > 0) {
+      res.setHeader('Content-Type', 'application/json');
+      if(debug) {
+          console.log("-------->before send: ");
+          console.log(examples[Object.keys(examples)[0]]);
+      }
+      res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+  } else {
+      res.end();
+  }
+}
+
+
