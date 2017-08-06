@@ -1,6 +1,6 @@
 'use strict';
 
-var request = require('request-promise');
+var rp = require('request-promise');
 
 var debug = true;
 
@@ -32,15 +32,56 @@ exports.anonymisationQueryOldRes = function(args, res, next) {
    * returns anony-query-response
    **/
   if(debug) console.log("--->RI: anonymisationQueryOldRes method called!");
+  
   var examples = {};
+  
   examples['application/json'] = {
-  "data_provider" : "test_provider",
-  "data_consumer" : "test_consumer",
-  "time_stamp" : "2006-01-02 15:04:05",
-  "dataID" : "test_data_007",
-  "ifExist": 0,
-  "budget_used": 10
-};
+    "data_provider" : "test_provider",
+    "data_consumer" : "test_consumer",
+    "time_stamp" : "2006-01-02 15:04:05",
+    "dataID" : "test_data_007",
+    "ifExist": 0,
+    "budget_used": 10
+  };
+
+  var options = args.body.value;
+  if(debug) {
+      console.log("---->RI send request to R [options]: ");
+      console.log(options);
+  }
+  // query the registry
+  rp({
+    method: 'POST',
+    uri: 'http://localhost:60005/r/get',
+    body: {"key": JSON.stringify(options)},
+    header: {'User-Agent': 'Registry-Interface'},
+    json: true
+  }).then(response => {
+    //if old result exist
+    if(debug) {
+        console.log("---->response the Registry: ");
+        console.log(response);
+    }
+    let old_result_exist = true;
+    let small_budget = 0.5;
+    if(old_result_exist){
+        examples['application/json'].ifExist = 1;
+        examples['application/json'].budget_used = small_budget;
+    } else {
+        //if old result not exist
+        examples['application/json'].ifExist = 0;
+        let remain_budget = 10;
+        if(args.request_budget < remain_budge){
+            examples['application/json'].budget_used = args.request_budget;
+        } else {
+            examples['application/json'].budget_used = -1;
+        }
+    }
+  }).catch(err => {
+      console.error(`---->error when request!`);
+      console.log(err);
+  });
+
   if (Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
@@ -58,6 +99,9 @@ exports.anonymisationReceiveAnonyRes = function(args, res, next) {
    * returns receive-anony-res-response
    **/
   if(debug) console.log(`--->RI: anonymisationReceiveAnonyRes method called`);
+
+  //perform utility check here
+
   var examples = {};
   examples['application/json'] = {
   "final_status": 1,
