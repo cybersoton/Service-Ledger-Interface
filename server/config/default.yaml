@@ -1,11 +1,14 @@
 #info for reaching the registry
 default:
   server:
-    ip: localhost
+    host: localhost
     port: 60005
   
-  path:
-    registry_get: /r/get
-    registry_put: /r/put
-    registry_delete: /r/delete
+  request_parameters:
+    host: localhost
+    port: 60005
+    path:
+      registry_get: /r/get
+      registry_put: /r/put
+      registry_delete: /r/delete
 
