@@ -3,8 +3,8 @@
 // output service configuration
 var config = require('config');
 var assert = require('assert');
-var registry_ip = config.get('registry.ip');
-var registry_port = config.get('registry.port');
+var registry_ip = config.get('request_parameters.registry.ip');
+var registry_port = config.get('request_parameters.registry.port');
 //registry url
 var registry_url = 'http://' + registry_ip + ':' + registry_port + '/' + 'r' + '/';
 
