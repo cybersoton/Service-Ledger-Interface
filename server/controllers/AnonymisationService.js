@@ -1,6 +1,9 @@
 'use strict';
 
 var rp = require('request-promise');
+var config = require('config');
+var url = require('url');
+var request_parameters = config.get('request_parameters');
 
 var debug = true;
 
@@ -52,7 +55,13 @@ exports.anonymisationQueryOldRes = function(args, res, next) {
   // query the registry
   rp({
     method: 'POST',
-    uri: 'http://localhost:60005/r/get',
+    // uri: 'http://localhost:60005/r/get',
+    uri: url.format({
+            protocol: 'http',
+            hostname: request_parameters.registry.ip,
+            port: request_parameters.registry.port,
+            path: request_parameters.path.registry_get
+         }),
     body: {"key": JSON.stringify(options)},
     header: {'User-Agent': 'Registry-Interface'},
     json: true
@@ -130,7 +139,13 @@ exports.anonymisationUpdateLedger = function(args, res, next) {
 
   rp({
       method: 'POST',
-      uri: 'http://localhost:60005/r/put',
+      // uri: 'http://localhost:60005/r/put',
+      uri: url.format({
+               protocol: 'http',
+               hostname: request_parameters.registry.ip,
+               port: request_parameters.registry.port,
+               path: request_parameters.path.registry_put
+           }),
       body: {
         "key": JSON.stringify(args.body.value),
         "value": JSON.stringify(args.body.value)
