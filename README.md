@@ -29,7 +29,7 @@ To set the service, execute the following commands
   $ cd Registry/server
   $ npm start
 ```
-The server is now running and listening on the port chosen in the config.yaml file (e.g. 60001). You can use the [client-stub interface] (http://localhost:60001/docs).  
+The server is now running and listening on the port chosen in the *config/default.yaml*. file (e.g. 60001). You can use the [client-stub interface] (http://localhost:60001/docs).  
 
 The Registry-Interface is expected to interact with the [Registry](https://github.com/sunfish-prj/Registry/), whose *url* and *port* are defined in the configuration file *config/default.yaml*.
 
