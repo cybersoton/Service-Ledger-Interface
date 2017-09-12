@@ -1,5 +1,9 @@
 'use strict';
 
+var rp = require
+
+var debug = true;
+
 exports.policyDeletePOST = function(args, res, next) {
   /**
    * Deleting a policy by its id 
@@ -7,10 +11,13 @@ exports.policyDeletePOST = function(args, res, next) {
    * policyId Query-request Body in JSON
    * returns ack-response
    **/
+  if(debug) console.log('---->RI: policyDeletePOST method called');
+
   var examples = {};
   examples['application/json'] = {
   "message" : "aeiou"
-};
+  };
+  
   if (Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
@@ -26,13 +33,16 @@ exports.policyPolServicePOST = function(args, res, next) {
    * serviceId Policy-ofservice-body Body in JSON
    * returns policy-ofservice-response
    **/
+  if(debug) console.log('---->RI: policyPolServicePOST method called');
+
   var examples = {};
   examples['application/json'] = {
   "list" : [ {
     "id" : "aeiou",
     "policy" : "aeiou"
   } ]
-};
+  };
+  
   if (Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
@@ -48,11 +58,14 @@ exports.policyReadPOST = function(args, res, next) {
    * policyId Query-request Body in JSON
    * returns policy-response
    **/
+  if(debug) console.log('---->RI: policyReadPOST method called');
+
   var examples = {};
   examples['application/json'] = {
   "expirationTime" : "aeiou",
   "policy" : "aeiou"
-};
+  };
+
   if (Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
@@ -68,11 +81,14 @@ exports.policyStorePOST = function(args, res, next) {
    * policySpec Policy-request-body Body in JSON
    * returns policy-response
    **/
+  if(debug) console.log('---->RI: policyStorePOST method called');
+
   var examples = {};
-  examples['application/json'] = {
-  "expirationTime" : "aeiou",
-  "policy" : "aeiou"
-};
+    examples['application/json'] = {
+    "expirationTime" : "aeiou",
+    "policy" : "aeiou"
+  };
+
   if (Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
