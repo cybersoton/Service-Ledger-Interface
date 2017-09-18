@@ -1,6 +1,8 @@
 'use strict';
 
-var rp = require
+var rp = require('request-promise');
+var config = require('config');
+var url = require('url');
 
 var debug = true;
 
@@ -84,7 +86,8 @@ exports.policyStorePOST = function(args, res, next) {
   if(debug) console.log('---->RI: policyStorePOST method called');
 
   var examples = {};
-    examples['application/json'] = {
+  
+  examples['application/json'] = {
     "expirationTime" : "aeiou",
     "policy" : "aeiou"
   };
