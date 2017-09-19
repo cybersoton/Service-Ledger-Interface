@@ -128,7 +128,7 @@ exports.anonymisationUpdateLedger = function(args, res, next) {
 
   if(debug) {
       console.log(`--->RI: anonymisationUpdateLedgeer method called. args: `);
-      console.log(args.body.value);
+      console.log(args);
   }
 
   

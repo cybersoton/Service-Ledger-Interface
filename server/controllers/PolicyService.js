@@ -4,6 +4,8 @@ var rp = require('request-promise');
 var config = require('config');
 var url = require('url');
 
+var request_parameters = config.get('request_parameters');
+
 var debug = true;
 
 exports.policyDeletePOST = function(args, res, next) {
@@ -84,13 +86,40 @@ exports.policyStorePOST = function(args, res, next) {
    * returns policy-response
    **/
   if(debug) console.log('---->RI: policyStorePOST method called');
+  if(debug) console.log(request_parameters);
+  if(debug) console.log(args.policySpec.value);
 
   var examples = {};
   
   examples['application/json'] = {
-    "expirationTime" : "aeiou",
-    "policy" : "aeiou"
+    "expirationTime" : args.policySpec.value.expirationTime,
+    "policy" : args.policySpec.value.policy
   };
+  
+  var options = {
+             "key": args.policySpec.value.policy,
+             "value": args.policySpec.value.serviceID
+  };
+
+  if(debug) console.log(options);
+
+  rp({
+      method: 'POST',
+      uri: url.format({
+           protocol: 'http',
+           hostname: request_parameters.registry.ip,
+           port: request_parameters.registry.port,
+           path: request_parameters.path.registry_put
+      }),
+      putSpec: options,
+      header:{'User-Agent': 'Registry-Interface'},
+      json: true
+  }).then(response => {
+      if(debug) {
+          console.log("---->response from Registry: ");
+          console.log(response);
+      }
+  }).catch(err => console.log("err"));
 
   if (Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
