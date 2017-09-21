@@ -97,8 +97,8 @@ exports.policyStorePOST = function(args, res, next) {
   };
   
   var options = {
-             "key": args.policySpec.value.policy,
-             "value": args.policySpec.value.serviceID
+             "key": args.policySpec.value.serviceID,
+             "value": args.policySpec.value.policy
   };
 
   if(debug) console.log(options);
