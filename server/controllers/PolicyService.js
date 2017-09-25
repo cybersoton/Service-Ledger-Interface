@@ -1,4 +1,5 @@
 'use strict';
+var sleep = require('sleep');
 
 var rp = require('request-promise');
 var config = require('config');
@@ -43,14 +44,14 @@ exports.policyDeletePOST = function(args, res, next) {
           console.log(response);
       }
       examples['application/json'].message = response.message;
+      if(Object.keys(examples).length > 0) {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+      } else {
+          res.end();
+      }
   }).catch(err => console.log(err));
 
-  if (Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-    res.end();
-  }
 }
 
 exports.policyPolServicePOST = function(args, res, next) {
@@ -114,15 +115,42 @@ exports.policyReadPOST = function(args, res, next) {
           console.log("---->response from Registry: ");
           console.log(response);
       }
-  }).catch(err => console.log(err));
-  
 
-  if (Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-    res.end();
-  }
+      var policy_content = JSON.parse(response.message);
+      console.log(policy_content);
+       
+      examples['application/json'].expirationTime = policy_content.expirationTime;
+      examples['application/json'].policy = policy_content.policy;
+      examples['application/json'].message = "Policy found";
+
+      if(Object.keys(examples).length > 0) {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+      } else {
+          res.end();
+      }
+  }).catch(err => {
+      if(err.statusCode == 404) 
+      {
+          console.log("---->Policy not found!");
+          examples['application/json'].expirationTime = "0";
+          examples['application/json'].policy = "none";
+          examples['application/json'].message = "Policy not found";
+      } else { 
+          console.log("---->error when request!");
+          examples['application/json'].expirationTime = "0";
+          examples['application/json'].policy = "none";
+          examples['application/json'].message = "error when request!";
+      }
+      if(Object.keys(examples).length > 0) {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+      } else {
+          res.end();
+      }
+  });
+
+
 }
 
 exports.policyStorePOST = function(args, res, next) {
