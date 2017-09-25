@@ -60,7 +60,7 @@ exports.anonymisationQueryOldRes = function(args, res, next) {
             protocol: 'http',
             hostname: request_parameters.registry.ip,
             port: request_parameters.registry.port,
-            path: request_parameters.path.registry_get
+            pathname: request_parameters.path.registry_get
          }),
     body: {"key": JSON.stringify(options)},
     header: {'User-Agent': 'Registry-Interface'},
@@ -144,7 +144,7 @@ exports.anonymisationUpdateLedger = function(args, res, next) {
                protocol: 'http',
                hostname: request_parameters.registry.ip,
                port: request_parameters.registry.port,
-               path: request_parameters.path.registry_put
+               pathname: request_parameters.path.registry_put
            }),
       body: {
         "key": JSON.stringify(args.body.value),
