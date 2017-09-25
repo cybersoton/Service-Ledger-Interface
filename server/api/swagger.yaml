@@ -348,8 +348,8 @@ definitions:
     type: "object"
     required:
     - "expirationTime"
-    - "id"
     - "policy"
+    - "policyId"
     - "requestorID"
     - "token"
     properties:
@@ -368,7 +368,7 @@ definitions:
         description: "Specifies the expiration time of the policy in milli-seconds\
           \ starting from midnight, January 1, 1970 UTC. After this time the policy\
           \ set must not be used."
-      id:
+      policyId:
         type: "string"
         description: "The identifer for the policy."
       serviceID:
@@ -415,6 +415,7 @@ definitions:
     type: "object"
     required:
     - "expirationTime"
+    - "message"
     - "policy"
     properties:
       policy:
@@ -425,6 +426,9 @@ definitions:
         description: "Specifies the expiration time of the policy set in milliseconds\
           \ starting from midnight, January 1, 1970 UTC. After this time the policy\
           \ set must not be used."
+      message:
+        type: "string"
+        description: "message of the operation status"
     description: "HTTP response for a successful read operation"
   dm-store-body:
     type: "object"
@@ -818,10 +822,10 @@ definitions:
     description: "HTTP response for a successful store operation"
   policyofserviceresponse_list:
     required:
-    - "id"
     - "policy"
+    - "policyId"
     properties:
-      id:
+      policyId:
         type: "string"
         description: "Specifies the id of the policy."
       policy:
