@@ -1,5 +1,4 @@
 'use strict';
-var sleep = require('sleep');
 
 var rp = require('request-promise');
 var config = require('config');
@@ -65,18 +64,53 @@ exports.policyPolServicePOST = function(args, res, next) {
 
   var examples = {};
   examples['application/json'] = {
-  "list" : [ {
-    "id" : "aeiou",
-    "policy" : "aeiou"
-  } ]
+  "list" : []
   };
   
-  if (Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-    res.end();
-  }
+  var options = {
+      "key": args.serviceId.value.serviceID
+  };
+
+  rp({
+      method: 'POST',
+      uri: url.format({
+           protocol: 'http',
+           hostname: request_parameters.registry.ip,
+           port: request_parameters.registry.port,
+           pathname: request_parameters.path.registry_get
+      }),
+      body: options,
+      header:{'User-Agent': 'Registry-Interface'},
+      json: true
+  }).then(response => {
+      if(debug) {
+          console.log("---->response from Registry: ");
+          console.log(response);
+      }
+
+      examples['application/json'].list.push({"serviceId": options.key, 
+                                              "policy": response.message});
+
+      if(Object.keys(examples).length > 0) {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+      } else {
+          res.end();
+      }
+  }).catch(err => {
+      if(err.statusCode == 404) 
+      {
+          console.log("---->Policy not found!");
+      } else { 
+          console.log("---->error when request!");
+      }
+      if(Object.keys(examples).length > 0) {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+      } else {
+          res.end();
+      }
+  });
 }
 
 exports.policyReadPOST = function(args, res, next) {
@@ -149,8 +183,6 @@ exports.policyReadPOST = function(args, res, next) {
           res.end();
       }
   });
-
-
 }
 
 exports.policyStorePOST = function(args, res, next) {
