@@ -22,6 +22,29 @@ exports.policyDeletePOST = function(args, res, next) {
   "message" : "aeiou"
   };
   
+  var options = {
+      "key": args.policyId.value.dataId
+  };
+
+  rp({
+      method: 'POST',
+      uri: url.format({
+           protocol: 'http',
+           hostname: request_parameters.registry.ip,
+           port: request_parameters.registry.port,
+           pathname: request_parameters.path.registry_delete
+      }),
+      body: options,
+      header:{'User-Agent': 'Registry-Interface'},
+      json: true
+  }).then(response => {
+      if(debug) {
+          console.log("---->response from Registry: ");
+          console.log(response);
+      }
+      examples['application/json'].message = response.message;
+  }).catch(err => console.log(err));
+
   if (Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
@@ -67,8 +90,32 @@ exports.policyReadPOST = function(args, res, next) {
   var examples = {};
   examples['application/json'] = {
   "expirationTime" : "aeiou",
-  "policy" : "aeiou"
+  "policy" : "aeiou",
+  "message": "aeiou"
   };
+
+  var options = {
+      "key": args.policyId.value.dataId
+  };
+
+  rp({
+      method: 'POST',
+      uri: url.format({
+           protocol: 'http',
+           hostname: request_parameters.registry.ip,
+           port: request_parameters.registry.port,
+           pathname: request_parameters.path.registry_get
+      }),
+      body: options,
+      header:{'User-Agent': 'Registry-Interface'},
+      json: true
+  }).then(response => {
+      if(debug) {
+          console.log("---->response from Registry: ");
+          console.log(response);
+      }
+  }).catch(err => console.log(err));
+  
 
   if (Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
@@ -99,6 +146,7 @@ exports.policyStorePOST = function(args, res, next) {
   var options = {
       "key": args.policySpec.value.policyId,
       "value": JSON.stringify({
+                  policy: args.policySpec.value.policy,
                   requestorID: args.policySpec.value.requestorID,
                   expirationTime: args.policySpec.value.expirationTime,
                   policyType: args.policySpec.value.policyType
