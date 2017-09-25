@@ -97,11 +97,15 @@ exports.policyStorePOST = function(args, res, next) {
   };
   
   var options = {
-             "key": args.policySpec.value.serviceID,
-             "value": args.policySpec.value.policy
+      "key": args.policySpec.value.policy,
+      "value": JSON.stringify({
+                  requestorID: args.policySpec.value.requestorID,
+                  expirationTime: args.policySpec.value.expirationTime,
+                  policyType: args.policySpec.value.policyType
+      })
   };
 
-  if(debug) console.log(options);
+  if(debug) console.log("---->store <policy, meta-data>");
 
   rp({
       method: 'POST',
@@ -109,9 +113,9 @@ exports.policyStorePOST = function(args, res, next) {
            protocol: 'http',
            hostname: request_parameters.registry.ip,
            port: request_parameters.registry.port,
-           path: request_parameters.path.registry_put
+           pathname: request_parameters.path.registry_put
       }),
-      putSpec: options,
+      body: options,
       header:{'User-Agent': 'Registry-Interface'},
       json: true
   }).then(response => {
@@ -119,7 +123,32 @@ exports.policyStorePOST = function(args, res, next) {
           console.log("---->response from Registry: ");
           console.log(response);
       }
-  }).catch(err => console.log("err"));
+  }).catch(err => console.log(err));
+  
+  options = {
+      "key": args.policySpec.value.serviceID,
+      "value": args.policySpec.value.policy
+  };
+
+  if(debug) console.log("---->store <serviceID, policy>");
+
+  rp({
+      method: 'POST',
+      uri: url.format({
+           protocol: 'http',
+           hostname: request_parameters.registry.ip,
+           port: request_parameters.registry.port,
+           pathname: request_parameters.path.registry_put
+      }),
+      body: options,
+      header:{'User-Agent': 'Registry-Interface'},
+      json: true
+  }).then(response => {
+      if(debug) {
+          console.log("---->response from Registry: ");
+          console.log(response);
+      }
+  }).catch(err => console.log(err));
 
   if (Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
