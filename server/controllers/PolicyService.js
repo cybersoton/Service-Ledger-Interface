@@ -97,7 +97,7 @@ exports.policyStorePOST = function(args, res, next) {
   };
   
   var options = {
-      "key": args.policySpec.value.policy,
+      "key": args.policySpec.value.policyId,
       "value": JSON.stringify({
                   requestorID: args.policySpec.value.requestorID,
                   expirationTime: args.policySpec.value.expirationTime,
