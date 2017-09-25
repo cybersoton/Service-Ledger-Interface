@@ -87,8 +87,12 @@ exports.anonymisationQueryOldRes = function(args, res, next) {
         }
     }
   }).catch(err => {
-      console.error(`---->error when request!`);
-      // console.log(err);
+      if(err.statusCode == 404) {
+        console.log("----> Id not found!")
+      } else {
+        console.error(`---->error when request!`);
+        // console.log(err);
+      }
   });
 
   if (Object.keys(examples).length > 0) {
