@@ -26,6 +26,50 @@ exports.policyDeletePOST = function(args, res, next) {
       "key": args.policyId.value.dataId
   };
 
+  // read <serviceID, policy> pair and remove the link
+  rp({
+      method: 'POST',
+      uri: url.format({
+           protocol: 'http',
+           hostname: request_parameters.registry.ip,
+           port: request_parameters.registry.port,
+           pathname: request_parameters.path.registry_get
+      }),
+      body: options,
+      header:{'User-Agent': 'Registry-Interface'},
+      json: true
+  }).then(response => {
+      if(debug) {
+          console.log("---->response from Registry: ");
+          console.log(response);
+      }
+
+      // get the serviceID
+      var policy_content = JSON.parse(response.message);
+      console.log(policy_content.serviceID);
+
+      rp({
+           method: 'POST',
+           uri: url.format({
+              protocol: 'http',
+           hostname: request_parameters.registry.ip,
+           port: request_parameters.registry.port,
+           pathname: request_parameters.path.registry_delete
+          }),
+        body: {"key": policy_content.serviceID},
+        header: {'User-Agent': 'Registry-Interface'},
+        json: true
+      });
+  }).catch(err => {
+      if(err.statusCode == 404) 
+      {
+          console.log("---->Policy not found!");
+      } else { 
+          console.log("---->error when request!");
+      }
+  });
+  
+  // delte <PolicyId, meta-data> pair
   rp({
       method: 'POST',
       uri: url.format({
@@ -35,7 +79,7 @@ exports.policyDeletePOST = function(args, res, next) {
            pathname: request_parameters.path.registry_delete
       }),
       body: options,
-      header:{'User-Agent': 'Registry-Interface'},
+      header: {'User-Agent': 'Registry-Interface'},
       json: true
   }).then(response => {
       if(debug) {
@@ -50,6 +94,7 @@ exports.policyDeletePOST = function(args, res, next) {
           res.end();
       }
   }).catch(err => console.log(err));
+
 
 }
 
@@ -155,7 +200,7 @@ exports.policyReadPOST = function(args, res, next) {
        
       examples['application/json'].expirationTime = policy_content.expirationTime;
       examples['application/json'].policy = policy_content.policy;
-      examples['application/json'].message = "Policy found";
+      examples['application/json'].message = policy_content.serviceID; 
 
       if(Object.keys(examples).length > 0) {
           res.setHeader('Content-Type', 'application/json');
@@ -208,6 +253,7 @@ exports.policyStorePOST = function(args, res, next) {
       "value": JSON.stringify({
                   policy: args.policySpec.value.policy,
                   requestorID: args.policySpec.value.requestorID,
+                  serviceID: args.policySpec.value.serviceID,
                   expirationTime: args.policySpec.value.expirationTime,
                   policyType: args.policySpec.value.policyType
       })
@@ -215,6 +261,7 @@ exports.policyStorePOST = function(args, res, next) {
 
   if(debug) console.log("---->store <policy, meta-data>");
 
+  // store <policyId, Meta-data> pair
   rp({
       method: 'POST',
       uri: url.format({
@@ -233,13 +280,35 @@ exports.policyStorePOST = function(args, res, next) {
       }
   }).catch(err => console.log(err));
   
+  rp({
+      method: 'POST',
+      uri: url.format({
+           protocol: 'http',
+           hostname: request_parameters.registry.ip,
+           port: request_parameters.registry.port,
+           pathname: request_parameters.path.registry_get
+      }),
+      body: options,
+      header:{'User-Agent': 'Registry-Interface'},
+      json: true
+  }).then(response => {
+
+  }).catch(err => {
+      if(err.statusCode == 404) 
+      {
+
+      } else { 
+
+      }
+  });
+  
   options = {
       "key": args.policySpec.value.serviceID,
-      "value": args.policySpec.value.policy
+      "value": args.policySpec.value.policyId
   };
 
-  if(debug) console.log("---->store <serviceID, policy>");
-
+  if(debug) console.log("---->store <serviceID, policyId>");
+  // store <serviceID, policyId> pair
   rp({
       method: 'POST',
       uri: url.format({
