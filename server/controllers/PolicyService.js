@@ -54,11 +54,42 @@ exports.policyDeletePOST = function(args, res, next) {
               protocol: 'http',
            hostname: request_parameters.registry.ip,
            port: request_parameters.registry.port,
-           pathname: request_parameters.path.registry_delete
+           pathname: request_parameters.path.registry_get
           }),
         body: {"key": policy_content.serviceID},
         header: {'User-Agent': 'Registry-Interface'},
         json: true
+      }).then(response => {
+          var policyIdArr = new Array();
+          policyIdArr = response.message.split(',');
+          var search_term = args.policyId.value.dataId;
+          var str_new  = "";
+          for(var i = 0; i < policyIdArr.length; i++) {
+              if(policyIdArr[i] == search_term) {
+                  policyIdArr.splice(i, 1);
+                  i--;
+              } else {
+                  str_new = str_new + policyIdArr[i];
+                  // console.log(str_new); 
+                  if(i != policyIdArr.length-1)
+                      str_new = str_new + ','; 
+              }
+          }
+          console.log(policyIdArr);
+          
+          rp({
+              method: 'POST',
+              uri: url.format({
+                                protocol: 'http',
+                                hostname: request_parameters.registry.ip,
+                                port: request_parameters.registry.port,
+                                pathname: request_parameters.path.registry_put
+                              }),
+              body: {"key": policy_content.serviceID, "value": str_new},
+              header:{'User-Agent': 'Registry-Interface'},
+              json: true
+          });
+          
       });
   }).catch(err => {
       if(err.statusCode == 404) 
@@ -238,8 +269,8 @@ exports.policyStorePOST = function(args, res, next) {
    * returns policy-response
    **/
   if(debug) console.log('---->RI: policyStorePOST method called');
-  if(debug) console.log(request_parameters);
-  if(debug) console.log(args.policySpec.value);
+  // if(debug) console.log(request_parameters);
+  // if(debug) console.log(args.policySpec.value);
 
   var examples = {};
   
@@ -280,6 +311,7 @@ exports.policyStorePOST = function(args, res, next) {
       }
   }).catch(err => console.log(err));
   
+  // read the existing <serviceId, [policyId]> pair
   rp({
       method: 'POST',
       uri: url.format({
@@ -288,50 +320,82 @@ exports.policyStorePOST = function(args, res, next) {
            port: request_parameters.registry.port,
            pathname: request_parameters.path.registry_get
       }),
-      body: options,
+      body: {"key": args.policySpec.value.serviceID},
       header:{'User-Agent': 'Registry-Interface'},
       json: true
   }).then(response => {
+      // if old result exists 
+      console.log(response);
+      var policyIdList = response.message + ',' + args.policySpec.value.policyId;
+      //policyIdList.push(args.policySpec.value.policyId);
+      console.log(policyIdList);
 
+      options = {
+          "key": args.policySpec.value.serviceID,
+          "value": policyIdList
+      };
+
+      if(debug) console.log("---->store <serviceID, [policyId]>");
+
+      // store <serviceID, [policyId]> pair
+      rp({
+          method: 'POST',
+          uri: url.format({
+              protocol: 'http',
+              hostname: request_parameters.registry.ip,
+              port: request_parameters.registry.port,
+              pathname: request_parameters.path.registry_put
+         }),
+         body: options,
+         header:{'User-Agent': 'Registry-Interface'},
+         json: true
+      });
+
+      if (Object.keys(examples).length > 0) {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+      } else {
+          res.end();
+      }
+    
   }).catch(err => {
-      if(err.statusCode == 404) 
-      {
+          if(err.statusCode == 404) 
+          {
+              options = {
+                  "key": args.policySpec.value.serviceID,
+                  "value": args.policySpec.value.policyId
+              };
 
-      } else { 
+              if(debug) console.log("---->store <serviceID, [policyId]>");
 
-      }
-  });
-  
-  options = {
-      "key": args.policySpec.value.serviceID,
-      "value": args.policySpec.value.policyId
-  };
+              // store <serviceID, [policyId]> pair
+              rp({
+                  method: 'POST',
+                  uri: url.format({
+                           protocol: 'http',
+                           hostname: request_parameters.registry.ip,
+                           port: request_parameters.registry.port,
+                           pathname: request_parameters.path.registry_put
+                       }),
+                  body: options,
+                  header:{'User-Agent': 'Registry-Interface'},
+                  json: true
+                });
 
-  if(debug) console.log("---->store <serviceID, policyId>");
-  // store <serviceID, policyId> pair
-  rp({
-      method: 'POST',
-      uri: url.format({
-           protocol: 'http',
-           hostname: request_parameters.registry.ip,
-           port: request_parameters.registry.port,
-           pathname: request_parameters.path.registry_put
-      }),
-      body: options,
-      header:{'User-Agent': 'Registry-Interface'},
-      json: true
-  }).then(response => {
-      if(debug) {
-          console.log("---->response from Registry: ");
-          console.log(response);
-      }
-  }).catch(err => console.log(err));
-
-  if (Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-    res.end();
-  }
+          } else { 
+              console.log("---->store <serviceID, [policyId] error!>")
+          }
+    
+          examples['application/json'] = {
+              "expirationTime" : args.policySpec.value.expirationTime,
+              "policy" : args.policySpec.value.policy
+          };
+          if (Object.keys(examples).length > 0) {
+                  res.setHeader('Content-Type', 'application/json');
+                  res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+          } else {
+                  res.end();
+          }
+      });
 }
 
