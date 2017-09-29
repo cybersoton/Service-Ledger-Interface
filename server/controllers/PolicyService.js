@@ -180,6 +180,8 @@ exports.policyPolServicePOST = function(args, res, next) {
           console.log(response);
       }
 
+      // check policy type here
+      
       examples['application/json'].list.push({"serviceId": options.key, 
                                               "policy": response.message});
 
