@@ -4,7 +4,7 @@ var crypto = require('crypto'),
 
 
 /* token validation */
-exports.tokenValidate = function(token){
+exports.reqValidate = function(reqId,token){
   return true;
 }
 

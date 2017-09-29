@@ -5,6 +5,8 @@ var config = require('config');
 var url = require('url');
 
 var request_parameters = config.get('request_parameters');
+//utils
+var utils = require('../util/utils.js');
 
 var debug = true;
 
@@ -16,6 +18,13 @@ exports.policyDeletePOST = function(args, res, next) {
    * returns ack-response
    **/
   if(debug) console.log('---->RI: policyDeletePOST method called');
+
+  var token = args.policyId.value.token;
+  var reqId = args.policyId.value.requestorID;
+  if (!utils.reqValidate(reqId,token)) {    
+      res.writeHead(401);
+      res.end('The authentication token is not valid!'); 
+  }
 
   var examples = {};
   examples['application/json'] = {
@@ -138,6 +147,13 @@ exports.policyPolServicePOST = function(args, res, next) {
    **/
   if(debug) console.log('---->RI: policyPolServicePOST method called');
 
+  var token = args.serviceId.value.token;
+  var reqId = args.serviceId.value.requestorID;
+  if (!utils.reqValidate(reqId,token)) {    
+      res.writeHead(401);
+      res.end('The authentication token is not valid!'); 
+  }
+
   var examples = {};
   examples['application/json'] = {
   "list" : []
@@ -197,6 +213,13 @@ exports.policyReadPOST = function(args, res, next) {
    * returns policy-response
    **/
   if(debug) console.log('---->RI: policyReadPOST method called');
+
+  var token = args.policyId.value.token;
+  var reqId = args.policyId.value.requestorID;
+  if (!utils.reqValidate(reqId,token)) {    
+      res.writeHead(401);
+      res.end('The authentication token is not valid!'); 
+  }
 
   var examples = {};
   examples['application/json'] = {
@@ -272,13 +295,20 @@ exports.policyStorePOST = function(args, res, next) {
   // if(debug) console.log(request_parameters);
   // if(debug) console.log(args.policySpec.value);
 
+  var token = args.policySpec.value.token;
+  var reqId = args.policySpec.value.requestorID;
+  if (!utils.reqValidate(reqId,token)) {    
+      res.writeHead(401);
+      res.end('The authentication token is not valid!'); 
+  }
+
   var examples = {};
   
   examples['application/json'] = {
     "expirationTime" : args.policySpec.value.expirationTime,
     "policy" : args.policySpec.value.policy
   };
-  
+
   rp({
       method: 'POST',
       uri: url.format({
@@ -315,7 +345,6 @@ exports.policyStorePOST = function(args, res, next) {
       "key": args.policySpec.value.policyId,
       "value": JSON.stringify({
                   policy: args.policySpec.value.policy,
-                  requestorID: args.policySpec.value.requestorID,
                   serviceID: args.policySpec.value.serviceID,
                   expirationTime: args.policySpec.value.expirationTime,
                   policyType: args.policySpec.value.policyType

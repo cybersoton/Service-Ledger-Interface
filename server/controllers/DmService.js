@@ -22,12 +22,12 @@ exports.dmDeletePOST = function(args, res, next) {
    **/
 	//Parse the input request_body and create the body for the registry back-end	
 	var token = args.body.value.token;
-	if (!utils.tokenValidate(token)) {    
+	var reqId = args.body.value.requestorID;
+	if (!utils.reqValidate(reqId,token)) {    
 	    res.writeHead(401);
 		res.end('The authentication token is not valid!'); 
     }
 	
-	var reqId = args.body.value.requestorID;
 	var dataId = args.body.value.dataId;
   
     if (reqId == undefined || dataId == undefined) {
@@ -83,12 +83,12 @@ exports.dmReadPOST = function(args, res, next) {
 	
 	//Parse the input request_body and create the body for the registry back-end	
 	var token = args.body.value.token;
-	if (!utils.tokenValidate(token)) {    
+	var reqId = args.body.value.requestorID;
+	if (!utils.reqValidate(reqId,token)) {    
 	    res.writeHead(401);
 		res.end('The authentication token is not valid!'); 
     }
 	
-	var reqId = args.body.value.requestorID;
 	var dataId = args.body.value.dataId;
   
     if (reqId == undefined || dataId == undefined) {
@@ -146,12 +146,12 @@ exports.dmStorePOST = function(args, res, next) {
 
 	//Parse the input request_body and create the body for the registry back-end	
 	var token = args.body.value.token;
-	if (!utils.tokenValidate(token)) {    
+	var reqId = args.body.value.requestorID;
+	if (!utils.reqValidate(reqId,token)) {    
 	    res.writeHead(401);
 		res.end('The authentication token is not valid!'); 
     }
 	
-	var reqId = args.body.value.requestorID;
 	var dataId = args.body.value.dataID;
 	var key = args.body.value.key;  
   
