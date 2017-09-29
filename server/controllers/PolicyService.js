@@ -292,7 +292,7 @@ exports.policyStorePOST = function(args, res, next) {
       json: true
   }).then(response => {
     // policy alread exists
-    examples['application/json'] = {
+    /*examples['application/json'] = {
              "expirationTime" : "null",
              "policy" : "policy alread exists, can't update directly!" 
     };
@@ -302,7 +302,9 @@ exports.policyStorePOST = function(args, res, next) {
     } else {
              res.end();
     }
-     
+    */
+    res.statusCode = 409;
+    res.end(JSON.stringify({error: "policy alread exists"}));
 
   }).catch(err => {
     if(err.statusCode == 404) 
@@ -430,6 +432,8 @@ exports.policyStorePOST = function(args, res, next) {
     } else {
       // unexpected error
       console.log("unexpected error!")
+      res.statusCode = 400;
+      res.end(JSON.stringify({error: "required parameter(s) missing"}));
     } 
   });
 }
