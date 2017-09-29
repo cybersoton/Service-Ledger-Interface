@@ -1,0 +1,470 @@
+{
+	"id": "f4ecc83d-05dd-4f66-a1a9-a6362630169d",
+	"name": "SUNFISH",
+	"description": null,
+	"order": [],
+	"folders": [
+		{
+			"owner": "2146098",
+			"lastUpdatedBy": "2146098",
+			"lastRevision": 1972804905,
+			"folder": null,
+			"id": "dbda1c41-6040-4e2a-b395-12e29e302dc2",
+			"name": "AnonymisationInterface",
+			"description": "",
+			"order": [
+				"0af54ce5-6bb1-fa4a-8abb-7785a18d86bf",
+				"57f2dd8c-cb1e-4077-684b-5b86fca9aada"
+			],
+			"folders_order": []
+		},
+		{
+			"owner": "2146098",
+			"lastUpdatedBy": "2146098",
+			"lastRevision": 2273511242,
+			"folder": "425cfae5-3949-dc64-41e2-306276fecbf9",
+			"id": "6bab47dc-86d4-7632-49b6-7996793a82e9",
+			"name": "RI-PolicyService",
+			"description": "",
+			"order": [
+				"d028de72-bef2-2e8e-42f9-a53c51e55f19",
+				"95c801b6-4a13-e67e-7276-a375aeec0e66",
+				"804f40c1-c7b4-c94d-0a0c-d01653d38b44",
+				"139f2680-0eff-1dac-d5ee-ed5a02b0e523"
+			],
+			"folders_order": []
+		},
+		{
+			"owner": "2146098",
+			"lastUpdatedBy": "2146098",
+			"lastRevision": 1972844035,
+			"folder": null,
+			"id": "aecec6f4-ab96-bcc5-729d-cc4ae560c3b0",
+			"name": "Registry",
+			"description": "",
+			"order": [
+				"ee6444f0-599a-f667-e7b6-ff3c84645ed9",
+				"8f838991-5022-c869-f27e-76dafddbeae0",
+				"6b6e0a21-3c52-aa78-a008-d629020d5c9d"
+			],
+			"folders_order": []
+		},
+		{
+			"owner": "2146098",
+			"lastUpdatedBy": "2146098",
+			"lastRevision": 1973722815,
+			"folder": null,
+			"id": "425cfae5-3949-dc64-41e2-306276fecbf9",
+			"name": "RegistryInterface",
+			"description": "",
+			"order": [
+				"0745b05b-9a8b-a7e5-3092-6d2c5f159025",
+				"288270ad-d5e8-94df-c5b0-905eb33e9f5a",
+				"4018a8d3-4744-3bc1-415b-daabf30008fd",
+				"1d4116a2-fe6f-49e6-8365-38d98d95f4db"
+			],
+			"folders_order": [
+				"6bab47dc-86d4-7632-49b6-7996793a82e9"
+			]
+		}
+	],
+	"folders_order": [
+		"dbda1c41-6040-4e2a-b395-12e29e302dc2",
+		"425cfae5-3949-dc64-41e2-306276fecbf9",
+		"aecec6f4-ab96-bcc5-729d-cc4ae560c3b0"
+	],
+	"timestamp": 0,
+	"owner": "2146098",
+	"public": false,
+	"requests": [
+		{
+			"folder": "425cfae5-3949-dc64-41e2-306276fecbf9",
+			"id": "0745b05b-9a8b-a7e5-3092-6d2c5f159025",
+			"name": "RI-AnonyRegister",
+			"dataMode": "raw",
+			"data": [],
+			"rawModeData": "{\n  \"requestorID\": \"string\",\n  \"token\": \"string\",\n  \"data_provider\": \"string\",\n  \"data_consumer\": \"string\",\n  \"time_stamp\": \"time-format\",\n  \"dataID\": \"string\"\n}",
+			"descriptionFormat": null,
+			"description": "",
+			"headers": "Content-Type: application/json\n",
+			"method": "POST",
+			"pathVariables": {},
+			"url": "152.78.70.16:60001/ri/anonymisation/register",
+			"preRequestScript": "",
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": "{}",
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariableData": [],
+			"responses": [],
+			"collectionId": "f4ecc83d-05dd-4f66-a1a9-a6362630169d"
+		},
+		{
+			"id": "0af54ce5-6bb1-fa4a-8abb-7785a18d86bf",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "152.78.70.46:50001/anonymisation/interface/queryFromUser",
+			"folder": "dbda1c41-6040-4e2a-b395-12e29e302dc2",
+			"queryParams": [],
+			"preRequestScript": "",
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1505747677743,
+			"name": "AnonyInterfaceQuery",
+			"description": "",
+			"collectionId": "f4ecc83d-05dd-4f66-a1a9-a6362630169d",
+			"responses": [],
+			"rawModeData": "{\n  \"requestorID\": \"string\",\n  \"token\": \"string\",\n  \"data_consumer\": \"string\",\n  \"dataID\": \"string\",\n  \"function_type\": \"string\",\n  \"request_budget\": 10\n}"
+		},
+		{
+			"id": "139f2680-0eff-1dac-d5ee-ed5a02b0e523",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "152.78.70.46:60001/ri/policy/delete",
+			"folder": "6bab47dc-86d4-7632-49b6-7996793a82e9",
+			"queryParams": [],
+			"preRequestScript": "",
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1506603580508,
+			"name": "RI-PolicyDelete",
+			"description": "",
+			"collectionId": "f4ecc83d-05dd-4f66-a1a9-a6362630169d",
+			"responses": [],
+			"rawModeData": "{\n  \"requestorID\": \"requestorID001\",\n  \"token\": \"token001\",\n  \"dataId\": \"policyId001\"\n}"
+		},
+		{
+			"id": "1d4116a2-fe6f-49e6-8365-38d98d95f4db",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "152.78.70.46:60001/ri/anonymisation/updateLedger",
+			"folder": "425cfae5-3949-dc64-41e2-306276fecbf9",
+			"queryParams": [],
+			"preRequestScript": "",
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1505748316659,
+			"name": "RI-AnonyUpdateLedger",
+			"description": "",
+			"collectionId": "f4ecc83d-05dd-4f66-a1a9-a6362630169d",
+			"responses": [],
+			"rawModeData": "{\n  \"data_provider\": \"provider001\",\n  \"data_consumer\": \"consumer001\",\n  \"dataID\": \"dataset001\",\n  \"time_stamp\": \"time-format\",\n  \"anonymised_result\": 999\n}"
+		},
+		{
+			"id": "288270ad-d5e8-94df-c5b0-905eb33e9f5a",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "152.78.70.46:60001/ri/anonymisation/queryOldRes",
+			"folder": "425cfae5-3949-dc64-41e2-306276fecbf9",
+			"queryParams": [],
+			"preRequestScript": "",
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1505749571961,
+			"name": "RI-AnonyQueryOldResult",
+			"description": "",
+			"collectionId": "f4ecc83d-05dd-4f66-a1a9-a6362630169d",
+			"responses": [],
+			"rawModeData": "{\n  \"requestorID\": \"requestor001\",\n  \"token\": \"token001\",\n  \"data_consumer\": \"consumer001\",\n  \"dataID\": \"dataset001\",\n  \"function_type\": \"sum\",\n  \"request_budget\": 5\n}"
+		},
+		{
+			"id": "4018a8d3-4744-3bc1-415b-daabf30008fd",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "152.78.70.46:60001/ri/anonymisation/receiveAnonyRes",
+			"folder": "425cfae5-3949-dc64-41e2-306276fecbf9",
+			"queryParams": [],
+			"preRequestScript": "",
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1505747681788,
+			"name": "RI-AnonyReceiveResult",
+			"description": "",
+			"collectionId": "f4ecc83d-05dd-4f66-a1a9-a6362630169d",
+			"responses": [],
+			"rawModeData": "{\n  \"anonymised_result\": 999,\n    \"budget_used\": 10,\n    \"dataID\": \"dataset001\",\n    \"data_consumer\": \"consumer001\",\n    \"function_type\": \"sum\",\n    \"requestorID\": \"requestor001\",\n    \"token\": \"token001\"\n}"
+		},
+		{
+			"folder": "dbda1c41-6040-4e2a-b395-12e29e302dc2",
+			"id": "57f2dd8c-cb1e-4077-684b-5b86fca9aada",
+			"name": "AnonyInterfaceRegister",
+			"dataMode": "raw",
+			"data": [],
+			"rawModeData": "{\n  \"requestorID\": \"string\",\n  \"token\": \"string\",\n  \"data_provider\": \"string\",\n  \"data_consumer\": \"string\",\n  \"time_stamp\": \"time-format\",\n  \"dataID\": \"string\"\n}",
+			"descriptionFormat": "html",
+			"description": "",
+			"headers": "Content-Type: application/json\n",
+			"method": "POST",
+			"pathVariables": {},
+			"url": "152.78.70.16:50005/anonymisation/interface/register",
+			"preRequestScript": "",
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": "{}",
+			"queryParams": [],
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"pathVariableData": [],
+			"responses": [],
+			"collectionId": "f4ecc83d-05dd-4f66-a1a9-a6362630169d"
+		},
+		{
+			"id": "6b6e0a21-3c52-aa78-a008-d629020d5c9d",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "152.78.70.46:60005/r/delete",
+			"folder": "aecec6f4-ab96-bcc5-729d-cc4ae560c3b0",
+			"queryParams": [],
+			"preRequestScript": "",
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1506532363767,
+			"name": "Registry-DELETE",
+			"description": "",
+			"collectionId": "f4ecc83d-05dd-4f66-a1a9-a6362630169d",
+			"responses": [],
+			"rawModeData": "{\n  \"key\": \"policyId003\"\n}"
+		},
+		{
+			"id": "804f40c1-c7b4-c94d-0a0c-d01653d38b44",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "152.78.70.46:60001/ri/policy/polService",
+			"folder": "6bab47dc-86d4-7632-49b6-7996793a82e9",
+			"queryParams": [],
+			"preRequestScript": "",
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1506603635344,
+			"name": "RI-PolicyPolService",
+			"description": "",
+			"collectionId": "f4ecc83d-05dd-4f66-a1a9-a6362630169d",
+			"rawModeData": "{\n  \"requestorID\": \"tester001\",\n  \"token\": \"token001\",\n  \"serviceID\": \"serviceId001\",\n  \"policyType\": \"ac\"\n}"
+		},
+		{
+			"id": "8f838991-5022-c869-f27e-76dafddbeae0",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "152.78.70.46:60005/r/get",
+			"folder": "aecec6f4-ab96-bcc5-729d-cc4ae560c3b0",
+			"queryParams": [],
+			"preRequestScript": "",
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1506355311072,
+			"name": "Registry-GET",
+			"description": "",
+			"collectionId": "f4ecc83d-05dd-4f66-a1a9-a6362630169d",
+			"responses": [],
+			"rawModeData": "{\n  \"key\": \"policyId001\"\n}"
+		},
+		{
+			"id": "95c801b6-4a13-e67e-7276-a375aeec0e66",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "152.78.70.46:60001/ri/policy/read",
+			"folder": "6bab47dc-86d4-7632-49b6-7996793a82e9",
+			"queryParams": [],
+			"preRequestScript": "",
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1506692615551,
+			"name": "RI-PolicyRead",
+			"description": "",
+			"collectionId": "f4ecc83d-05dd-4f66-a1a9-a6362630169d",
+			"responses": [],
+			"rawModeData": "{\n  \"requestorID\": \"tester001\",\n  \"token\": \"token001\",\n  \"dataId\": \"string\"\n}"
+		},
+		{
+			"id": "d028de72-bef2-2e8e-42f9-a53c51e55f19",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "152.78.70.46:60001/ri/policy/store",
+			"folder": "6bab47dc-86d4-7632-49b6-7996793a82e9",
+			"queryParams": [],
+			"preRequestScript": "",
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1506692617126,
+			"name": "RI-PolicyStore",
+			"description": "",
+			"collectionId": "f4ecc83d-05dd-4f66-a1a9-a6362630169d",
+			"responses": [],
+			"rawModeData": "{\n  \"requestorID\": \"tester009\",\n  \"token\": \"token009\",\n  \"policy\": \"policy009\",\n  \"expirationTime\": \"009 second\",\n  \"policyId\": \"policyId009\",  \n  \"serviceID\": \"serviceId009\",\n  \"policyType\": \"ac\"\n}"
+		},
+		{
+			"id": "ee6444f0-599a-f667-e7b6-ff3c84645ed9",
+			"headers": "Content-Type: application/json\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/json",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "152.78.70.46:60005/r/put",
+			"folder": "aecec6f4-ab96-bcc5-729d-cc4ae560c3b0",
+			"queryParams": [],
+			"preRequestScript": "",
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1506342725907,
+			"name": "Registry-PUT",
+			"description": "",
+			"collectionId": "f4ecc83d-05dd-4f66-a1a9-a6362630169d",
+			"responses": [],
+			"rawModeData": "{\n  \"key\": \"string\",\n  \"value\": \"string\"\n}"
+		}
+	]
+}
