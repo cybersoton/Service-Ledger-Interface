@@ -1,12 +1,12 @@
 #info for reaching the registry
 server:
   host: localhost
-  port: 60001
+  port: 8089
   
 request_parameters:
   registry:
     ip: localhost
-    port: 60005
+    port: 8090
   path:
     registry_get: /r/get
     registry_put: /r/put
