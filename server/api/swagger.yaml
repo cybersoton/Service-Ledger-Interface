@@ -344,7 +344,7 @@ paths:
             \ is invalid, etc.)."
       x-swagger-router-controller: "Sla"
 
-  /contract/invoke
+  /contract/invoke:
     post:
       tags:
       - "contract"
@@ -361,11 +361,11 @@ paths:
         200:
           description: "The response body for a successful invoke."
           schema:
-            $ref: "#/defnitions/invoke-contract-response"
+            $ref: "#/definitions/invoke-contract-response"
         400:
           description: "Invalid request, required parameter(s) missing."
         401:
-          descriotion: "The operation is not allowed (unauthorised access, the token\
+          description: "The operation is not allowed (unauthorised access, the token\
             \ is invalid, etc.)."
       x-swagger-router-controller: "Contract"
 
