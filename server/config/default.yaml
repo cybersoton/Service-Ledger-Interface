@@ -11,4 +11,5 @@ request_parameters:
     registry_get: /r/get
     registry_put: /r/put
     registry_delete: /r/delete
+    registry_invoke: /r/invokeCC
 
