@@ -515,6 +515,10 @@ definitions:
     - "requestorID"
     - "time_stamp"
     - "token"
+    - "function_type"
+    - "privacy_budget"
+    - "configuration_key"
+    - "file_key"
     properties:
       requestorID:
         type: "string"
@@ -535,6 +539,22 @@ definitions:
       dataID:
         type: "string"
         description: "Identifier of the shared dataset."
+      function_type:
+        type: "array"
+        items:
+          type: "string"
+        description: "supported function types for users' query"
+      privacy_budget:
+        type: "array"
+        items:
+          type: "string"
+        description: "privacy budget of each function type"
+      configuration_key:
+        type: "string"
+        description: "configuration key from the anonymisation service"
+      file_key:
+        type: "string"
+        description: "key for the uploaded file"
     description: "HTTP body defining the register operation for the /anonymisation/register\
       \ endpoint."
   anony-register-response:
