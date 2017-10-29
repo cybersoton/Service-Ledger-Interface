@@ -20,9 +20,9 @@ exports.anonymisationRegisterToRegistry = function(args, res, next) {
       "message" : "register failed"
   };
 
+  //store function types
   rp({
       method: 'POST',
-      // uri: 'http://localhost:XXXX/r/put',
       uri: url.format({
             protocol: 'http',
             hostname: request_parameters.registry.ip,
@@ -30,8 +30,59 @@ exports.anonymisationRegisterToRegistry = function(args, res, next) {
             pathname: request_parameters.path.registry_put
       }),
       body: {
-                "key": JSON.stringify(args.body.value),
-                "value": JSON.stringify(args.body.value)
+                "key": "functionTypes",
+                "value": JSON.stringify(args.body.value.function_type)
+            },
+      header: {'User-Agent': 'Registry-Interface'},
+      json: true
+  });
+
+  //store privacy budget 
+  rp({
+      method: 'POST',
+      uri: url.format({
+            protocol: 'http',
+            hostname: request_parameters.registry.ip,
+            port: request_parameters.registry.port,
+            pathname: request_parameters.path.registry_put
+      }),
+      body: {
+                "key": "privacyBudget",
+                "value": JSON.stringify(args.body.value.privacy_budget)
+            },
+      header: {'User-Agent': 'Registry-Interface'},
+      json: true
+  });
+
+  //store configuration key
+  rp({
+      method: 'POST',
+      uri: url.format({
+            protocol: 'http',
+            hostname: request_parameters.registry.ip,
+            port: request_parameters.registry.port,
+            pathname: request_parameters.path.registry_put
+      }),
+      body: {
+                "key": "configurationKey",
+                "value": JSON.stringify(args.body.value.configuration_key)
+            },
+      header: {'User-Agent': 'Registry-Interface'},
+      json: true
+  });
+  
+  //store file key
+  rp({
+      method: 'POST',
+      uri: url.format({
+            protocol: 'http',
+            hostname: request_parameters.registry.ip,
+            port: request_parameters.registry.port,
+            pathname: request_parameters.path.registry_put
+      }),
+      body: {
+                "key": "fileKey", 
+                "value": JSON.stringify(args.body.value.file_key)
             },
       header: {'User-Agent': 'Registry-Interface'},
       json: true
