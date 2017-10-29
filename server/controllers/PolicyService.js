@@ -185,7 +185,6 @@ exports.policyPolServicePOST = function(args, res, next) {
       var policy_arr = response.message.split(";");
 
       policy_arr.forEach(function(value){
-          console.log(value);
           var each_policy = value.split(",");
           examples['application/json'].list.push({"policyId": each_policy[0], 
                                               "policy": each_policy[1]});
