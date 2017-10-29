@@ -182,8 +182,15 @@ exports.policyPolServicePOST = function(args, res, next) {
 
       // check policy type here
       
-      examples['application/json'].list.push({"serviceId": options.key, 
-                                              "policy": response.message});
+      var policy_arr = response.message.split(";");
+
+      policy_arr.forEach(function(value){
+          console.log(value);
+          var each_policy = value.split(",");
+          examples['application/json'].list.push({"policyId": each_policy[0], 
+                                              "policy": each_policy[1]});
+
+      });
 
       if(Object.keys(examples).length > 0) {
           res.setHeader('Content-Type', 'application/json');
@@ -343,30 +350,30 @@ exports.policyStorePOST = function(args, res, next) {
     {
       // policy not exists
 
-  var options = {
-      "key": args.policySpec.value.policyId,
-      "value": JSON.stringify({
-                  policy: args.policySpec.value.policy,
-                  serviceID: args.policySpec.value.serviceID,
-                  expirationTime: args.policySpec.value.expirationTime,
-                  policyType: args.policySpec.value.policyType
-      })
-  };
+        var options = {
+            "key": args.policySpec.value.policyId,
+            "value": JSON.stringify({
+                      policy: args.policySpec.value.policy,
+                      serviceID: args.policySpec.value.serviceID,
+                      expirationTime: args.policySpec.value.expirationTime,
+                      policyType: args.policySpec.value.policyType
+        })
+    };
 
-  if(debug) console.log("---->store <policy, meta-data>");
+    if(debug) console.log("---->store <policy, meta-data>");
 
-  // store <policyId, Meta-data> pair
-  rp({
-      method: 'POST',
-      uri: url.format({
-           protocol: 'http',
-           hostname: request_parameters.registry.ip,
-           port: request_parameters.registry.port,
-           pathname: request_parameters.path.registry_put
-      }),
-      body: options,
-      header:{'User-Agent': 'Registry-Interface'},
-      json: true
+    // store <policyId, Meta-data> pair
+    rp({
+        method: 'POST',
+        uri: url.format({
+             protocol: 'http',
+             hostname: request_parameters.registry.ip,
+             port: request_parameters.registry.port,
+             pathname: request_parameters.path.registry_put
+        }),
+        body: options,
+        header:{'User-Agent': 'Registry-Interface'},
+        json: true
   }).then(response => {
       if(debug) {
           console.log("---->response from Registry: ");
@@ -389,7 +396,7 @@ exports.policyStorePOST = function(args, res, next) {
   }).then(response => {
       // if old result exists 
       console.log(response);
-      var policyIdList = response.message + ',' + args.policySpec.value.policyId;
+      var policyIdList = response.message + ';' + args.policySpec.value.policyId + ',' + args.policySpec.value.policy;
       console.log(policyIdList);
 
       options = {
@@ -425,7 +432,7 @@ exports.policyStorePOST = function(args, res, next) {
           {
               options = {
                   "key": args.policySpec.value.serviceID,
-                  "value": args.policySpec.value.policyId
+                  "value": args.policySpec.value.policyId + ',' + args.policySpec.value.policy
               };
 
               if(debug) console.log("---->store <serviceID, [policyId]>");
