@@ -173,21 +173,28 @@ exports.anonymisationReceiveAnonyRes = function(args, res, next) {
      "final_result": -111
   };
 
+  var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1MDg3ODcyMDksInVzZXJuYW1lIjoiSmltIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE1MDg3NTEyMDl9.A6UOctlh0msli0jHLtsFQceY1LOhou-k2jPAdiGEdGg";
+
   //perform utility check here
+  var options = {
+      "authorization": token, 
+      "chaincodeName": "anonymisation_cc",
+      "fcn": utilityCheck,
+      "args": ["Data01","{'budget':0.5,'funType':'sum'}"]
+  };
   rp({
       method: 'POST',
-      // uri: 'http://localhost:60005/r/get',
       uri: url.format({
             protocol: 'http',
             hostname: request_parameters.registry.ip,
             port: request_parameters.registry.port,
-            pathname: request_parameters.path.registry_get
+            pathname: request_parameters.path.registry_invoke
       }),
-      body: {"key": JSON.stringify(args.body.value)},
+      body: options,
       header: {'User-Agent': 'Registry-Interface'},
       json: true
   }).then(response => {
-      examples['application/json'].final_result = anonymised_result;
+      examples['application/json'].final_result = args.anonymised_result;
       examples['application/json'].final_status = 1; 
       
       if (Object.keys(examples).length > 0) {
