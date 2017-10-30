@@ -251,8 +251,8 @@ exports.anonymisationReceiveAnonyRes = function(args, res, next) {
   var options = {
       "authorization": token, 
       "chaincodeName": "anonymisation_cc",
-      "fcn": utilityCheck,
-      "args": ["Data01","{'budget':0.5,'funType':'sum'}"]
+      "fcn": "utilityCheck",
+      "args": {'dataId':args.body.dataID, 'budget':args.body.value.budget_used,'funType':args.body.value.function_type}
   };
   rp({
       method: 'POST',
@@ -276,14 +276,17 @@ exports.anonymisationReceiveAnonyRes = function(args, res, next) {
           res.end();
       }
   }).catch(err => {
-      console.log("---->error when utility checking")
-      if (Object.keys(examples).length > 0) {
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-      } else {
-          res.end();
-      }
+      // console.log("---->error when utility checking")
   });
+      
+  examples['application/json'].final_result = args.body.value.anonymised_result;
+  examples['application/json'].final_status = 1; 
+  if (Object.keys(examples).length > 0) {
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+  } else {
+        res.end();
+  }
 
 }
 
