@@ -545,9 +545,9 @@ definitions:
           type: "string"
         description: "supported function types for users' query"
       privacy_budget:
-        type: "array"
-        items:
-          type: "string"
+        type: "object"
+        additionalProperties:
+          type: "number" 
         description: "privacy budget of each function type"
       configuration_key:
         type: "string"
@@ -678,6 +678,7 @@ definitions:
   update-ledger-body:
     type: "object"
     required:
+    - "function_type"
     - "anonymised_result"
     - "dataID"
     - "data_consumer"
@@ -699,6 +700,9 @@ definitions:
       anonymised_result:
         type: "number"
         description: "the final anonymised result"
+      function_type:
+        type: "string"
+        description: "the function type of the query"
     description: "HTTP body definiting the update ledger operation for the /ri/anonymisation/updateLedger\
       \ endpoint"
   update-ledger-response:
