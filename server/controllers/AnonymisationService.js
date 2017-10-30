@@ -4,6 +4,7 @@ var rp = require('request-promise');
 var config = require('config');
 var url = require('url');
 var request_parameters = config.get('request_parameters');
+var anonymisation_parameters = config.get('anonymisation_parameters');
 
 var debug = true;
 
@@ -120,74 +121,85 @@ exports.anonymisationQueryOldRes = function(args, res, next) {
   var examples = {};
   
   examples['application/json'] = {
-    "data_provider" : "test_provider",
-    "data_consumer" : "test_consumer",
-    "time_stamp" : "2006-01-02 15:04:05",
-    "dataID" : "test_data_007",
+    "dataID" : "error",
     "ifExist": 0,
-    "budget_used": 10
+    "budget_used": -1 
   };
+
+  examples['application/json'].dataID = args.body.value.dataID;
 
   var options = args.body.value;
   if(debug) {
-      console.log("---->RI send request to Registry [options]: ");
-      console.log(options);
+      console.log("---->RI send request to Registry: ");
   }
-  // query the registry
+
+  var remain_budget = -1;
+
   rp({
     method: 'POST',
-    // uri: 'http://localhost:60005/r/get',
     uri: url.format({
             protocol: 'http',
             hostname: request_parameters.registry.ip,
             port: request_parameters.registry.port,
             pathname: request_parameters.path.registry_get
          }),
-    body: {"key": JSON.stringify(options)},
+    body: {"key": "privacyBudget"},
     header: {'User-Agent': 'Registry-Interface'},
     json: true
   }).then(response => {
-    //if old result exist
+    var obj = JSON.parse(response.message);
+    for (var key in obj) {
+        if(key == args.body.value.function_type) {
+            remain_budget = obj[key];
+        }
+    }
+
+    // query the registry
+    rp({
+        method: 'POST',
+        // uri: 'http://localhost:60005/r/get',
+        uri: url.format({
+              protocol: 'http',
+              hostname: request_parameters.registry.ip,
+              port: request_parameters.registry.port,
+              pathname: request_parameters.path.registry_get
+        }),
+        body: {"key": args.body.value.function_type},
+        header: {'User-Agent': 'Registry-Interface'},
+        json: true
+    }).then(response => {
+    //old result exist
     if(debug) {
         console.log("---->response the Registry: ");
         console.log(response);
     }
     let old_result_exist = true;
-    let small_budget = 0.5;
-    if(old_result_exist){
+    let old_result = response.message;
+    let small_budget = anonymisation_parameters.small_budget.value;
+    if(old_result_exist) {
         examples['application/json'].ifExist = 1;
         examples['application/json'].budget_used = small_budget;
-    } else {
-        //if old result not exist
-        examples['application/json'].ifExist = 0;
-        let remain_budget = 10;
-        if(args.body.value.request_budget < remain_budge){
-            examples['application/json'].budget_used = args.body.value.request_budget;
-        } else {
-            // budget used up
-            examples['application/json'].budget_used = -1;
-        }
-    }
+    } 
     if (Object.keys(examples).length > 0) {
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
     } else {
         res.end();
     }
-  }).catch(err => {
+    }).catch(err => {
+    //old result doesn't exist
       if(err.statusCode == 404) {
-          console.log("----> Id not found!")
+          console.log("----> old result not found!")
 
           let old_result_exist = false;
-          let small_budget = 0.5;
+          let small_budget = anonymisation_parameters.small_budget.value;
           if(old_result_exist){
               examples['application/json'].ifExist = 1;
               examples['application/json'].budget_used = small_budget;
           } else {
-              //if old result not exist
+              //old result not exist
               examples['application/json'].ifExist = 0;
-              let remain_budget = 10;
-              if(args.body.value.request_budget < remain_budge){
+              if(args.body.value.request_budget < remain_budget){
                   examples['application/json'].budget_used = args.body.value.request_budget;
               } else {
                   // budget used up
@@ -204,8 +216,17 @@ exports.anonymisationQueryOldRes = function(args, res, next) {
            console.error(`---->error when request!`);
            // console.log(err);
       }
+    });
+ 
+  }).catch(err => {
+    console.log("----->initial budgets not defined!")
+    if (Object.keys(examples).length > 0) {
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+    } else {
+        res.end();
+    }
   });
-
 }
 
 exports.anonymisationReceiveAnonyRes = function(args, res, next) {
@@ -276,12 +297,11 @@ exports.anonymisationUpdateLedger = function(args, res, next) {
   
   var examples = {};
   examples['application/json'] = {
-      message: "update ledger not successfully!"
+      message: "update ledger failed!"
   };
 
   rp({
       method: 'POST',
-      // uri: 'http://localhost:60005/r/put',
       uri: url.format({
                protocol: 'http',
                hostname: request_parameters.registry.ip,
@@ -289,8 +309,8 @@ exports.anonymisationUpdateLedger = function(args, res, next) {
                pathname: request_parameters.path.registry_put
            }),
       body: {
-        "key": JSON.stringify(args.body.value),
-        "value": JSON.stringify(args.body.value)
+        "key": args.body.value.function_type,
+        "value": args.body.value.anonymised_result.toString()
       },
       header: {'User-Agent': 'Registry-Interface'},
       json: true
@@ -306,7 +326,15 @@ exports.anonymisationUpdateLedger = function(args, res, next) {
      } else {
         res.end();
      }
-  }).catch(err => console.log(err));
+  }).catch(err => {
+    console.log(err)
+    if (Object.keys(examples).length > 0) {
+       res.setHeader('Content-Type', 'application/json');
+       res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+    } else {
+       res.end();
+    }
+  });
 
 }
 
