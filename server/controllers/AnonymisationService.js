@@ -245,14 +245,23 @@ exports.anonymisationReceiveAnonyRes = function(args, res, next) {
      "final_result": -111
   };
 
-  var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1MDg3ODcyMDksInVzZXJuYW1lIjoiSmltIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE1MDg3NTEyMDl9.A6UOctlh0msli0jHLtsFQceY1LOhou-k2jPAdiGEdGg";
+  var token = request_parameters.token.chaincode_auth; 
+  console.log(token);
+  var chaincodeArgs = {
+      "budget": args.body.value.budget_used,
+      "funType": args.body.value.function_type,
+      "result": args.body.value.anonymised_result
+  }; 
+
+  var chaincodeArgs_arr = [JSON.stringify(args.body.value.dataID), JSON.stringify(chaincodeArgs)];
+  console.log(chaincodeArgs_arr);
 
   //perform utility check here
   var options = {
       "authorization": token, 
       "chaincodeName": "anonymisation_cc",
       "fcn": "utilityCheck",
-      "args": {'dataId':args.body.dataID, 'budget':args.body.value.budget_used,'funType':args.body.value.function_type}
+      "args": chaincodeArgs_arr 
   };
   rp({
       method: 'POST',
@@ -266,7 +275,11 @@ exports.anonymisationReceiveAnonyRes = function(args, res, next) {
       header: {'User-Agent': 'Registry-Interface'},
       json: true
   }).then(response => {
-      examples['application/json'].final_result = args.anonymised_result;
+      if(debug) {
+          console.log("---->response from the utilityCheck chaincode: ");
+          console.log(response);
+      }
+      examples['application/json'].final_result = args.body.value.anonymised_result;
       examples['application/json'].final_status = 1; 
       
       if (Object.keys(examples).length > 0) {
@@ -276,17 +289,17 @@ exports.anonymisationReceiveAnonyRes = function(args, res, next) {
           res.end();
       }
   }).catch(err => {
-      // console.log("---->error when utility checking")
+      // console.log("---->error when invoke utilityCheck chaincode");
+      examples['application/json'].final_result = args.body.value.anonymised_result;
+      examples['application/json'].final_status = 1; 
+      if (Object.keys(examples).length > 0) {
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+      } else {
+            res.end();
+      }
   });
       
-  examples['application/json'].final_result = args.body.value.anonymised_result;
-  examples['application/json'].final_status = 1; 
-  if (Object.keys(examples).length > 0) {
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-        res.end();
-  }
 
 }
 
