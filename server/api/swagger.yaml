@@ -1,21 +1,20 @@
 ---
 swagger: "2.0"
 info:
-  version: "2.1.0"
-  title: "SUNFISH Registry Interface"
+  version: "2.2.0"
+  title: "SUNFISH Service Ledger Interface"
   contact:
     name: "Andrea Margheri"
     email: "a.margheri@soton.ac.uk"
-basePath: "/ri"
+basePath: "/sli"
 tags:
 - name: "policy"
 - name: "dm"
-- name: "anony"
-- name: "contract"
+- name: "anonymisation"
 - name: "alert"
 - name: "monitoring"
-- name: "sla"
 - name: "state"
+- name: "contract"
 consumes:
 - "application/json"
 produces:
@@ -294,111 +293,354 @@ paths:
           description: "The operation is not allowed (unauthorised access, the token\
             \  is invalid, etc.)"
       x-swagger-router-controller: "Anonymisation"
-  /SLAMetrics/store:
+  /alert/store:
     post:
       tags:
-      - "sla"
-      description: "This endpoint is used to store performance metrics.\n"
-      operationId: "sLAMetricsStorePOST"
+      - "alert"
+      description: "This endpoint is used to store alerts.\n"
+      operationId: "alertStorePOST"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
       parameters:
       - in: "body"
         name: "body"
         description: "Body in JSON"
         required: true
         schema:
-          $ref: "#/definitions/sla-store-body"
+          $ref: "#/definitions/alert-store"
       responses:
         200:
           description: "The response body for a successful response."
           schema:
-            $ref: "#/definitions/sla-store-response"
+            $ref: "#/definitions/ack-response"
         400:
           description: "Invalid request, required parameter(s) missing."
         401:
           description: "The operation is not allowed (unauthorised access, the token\
             \ is invalid, etc.)."
-      x-swagger-router-controller: "Sla"
-  /SLAMetrics/read:
+      x-swagger-router-controller: "Alert"
+  /alert/read:
     post:
       tags:
-      - "sla"
-      description: "This endpoint is used to retrieve the stored metrics using the\
-        \ index.\n"
-      operationId: "sLAMetricsReadPOST"
+      - "alert"
+      description: "This endpoint is used to retrieve the stored alert using the index.\
+        \ The body contains the alert id received by the store api\n"
+      operationId: "alertReadPOST"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
       parameters:
       - in: "body"
         name: "body"
         description: "Body in JSON"
         required: true
         schema:
-          $ref: "#/definitions/sla-read-body"
+          $ref: "#/definitions/query-request"
       responses:
         200:
           description: "The response body for a successful response."
           schema:
-            $ref: "#/definitions/sla-read-response"
+            $ref: "#/definitions/ack-response"
         400:
           description: "Invalid request, required parameter(s) missing."
         401:
           description: "The operation is not allowed (unauthorised access, the token\
             \ is invalid, etc.)."
-      x-swagger-router-controller: "Sla"
-
-  /contract/invoke:
+      x-swagger-router-controller: "Alert"
+  /monitoring/store:
     post:
       tags:
-      - "contract"
-      description: "This endpoint is used to invoke a smart contract on hypeledger"
-      operationId: "invokeContract"
+      - "monitoring"
+      description: "This endpoint is used to store relevant monitoring data.\n"
+      operationId: "monitoringStorePOST"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
       parameters:
       - in: "body"
         name: "body"
-        description: "Body in json"
+        description: "Body in JSON"
         required: true
         schema:
-          $ref: "#/definitions/invoke-contract-body"
+          $ref: "#/definitions/monitoring-store"
       responses:
         200:
-          description: "The response body for a successful invoke."
+          description: "The response body for a successful response."
           schema:
-            $ref: "#/definitions/invoke-contract-response"
+            $ref: "#/definitions/ack-response"
         400:
           description: "Invalid request, required parameter(s) missing."
         401:
           description: "The operation is not allowed (unauthorised access, the token\
             \ is invalid, etc.)."
-      x-swagger-router-controller: "Contract"
-
+      x-swagger-router-controller: "Monitoring"
+  /monitoring/read:
+    post:
+      tags:
+      - "monitoring"
+      description: "This endpoint is used to read the relevant monitoring data.\n"
+      operationId: "monitoringReadPOST"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/query-request"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/monitoring-response"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "Monitoring"
+  /state/service-store:
+    post:
+      tags:
+      - "state"
+      description: "Storing federated services\n"
+      operationId: "stateService_storePOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/state-service-store-body"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/ack-response"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "State"
+  /state/service-read:
+    post:
+      tags:
+      - "state"
+      description: "Storing federated services\n"
+      operationId: "stateService_readPOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON cotaining the service id"
+        required: true
+        schema:
+          $ref: "#/definitions/query-request"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/state-service-request-body"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "State"
+  /state/member-store:
+    post:
+      tags:
+      - "state"
+      description: "Storing federated services\n"
+      operationId: "stateMember_storePOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/state-member-store-body"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/ack-response"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "State"
+  /state/member-read:
+    post:
+      tags:
+      - "state"
+      description: "Storing federated services\n"
+      operationId: "stateMember_readPOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON cotaining the service id"
+        required: true
+        schema:
+          $ref: "#/definitions/query-request"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/state-member-request-body"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "State"
+  /state/vm-store:
+    post:
+      tags:
+      - "state"
+      description: "Storing federated services\n"
+      operationId: "stateVm_storePOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/state-vm-store-body"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/ack-response"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "State"
+  /state/vm-read:
+    post:
+      tags:
+      - "state"
+      description: "Storing federated services\n"
+      operationId: "stateVm_readPOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON cotaining the vm id"
+        required: true
+        schema:
+          $ref: "#/definitions/query-request"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/state-vm-request-body"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "State"
+  /state/tenant-create:
+    post:
+      tags:
+      - "state"
+      description: "Creating a tenant\n"
+      operationId: "stateTenant_createPOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/state-tenant-store-body"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/ack-response"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "State"
+  /state/tenant-addMember:
+    post:
+      tags:
+      - "state"
+      description: "Creating a tenant\n"
+      operationId: "stateTenant_addMemberPOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/state-tenant-store-member-body"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/ack-response"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "State"
+  /state/tenant-read:
+    post:
+      tags:
+      - "state"
+      description: "Storing federated services\n"
+      operationId: "stateTenant_readPOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON cotaining the service id"
+        required: true
+        schema:
+          $ref: "#/definitions/query-request"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/state-tenant-request-body"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "State"
 definitions:
-
-  invoke-contract-body:
-    type: "object"
-    required:
-    - "chaincodeName"
-    - "fcn"
-    - "args"
-    properties:
-      chaincodeName:
-        type: "string"
-      fcn:
-        type: "string"
-        description: "function name to invoke"
-      args:
-        type: "array"
-        items:
-          type: "string"
-        description: "arguments of the function"
-
-  invoke-contract-response:
-    type: "object"
-    required:
-    - "returnValue"
-    properties:
-      returnValue:
-        type: "string"
-        description: "return value of the contract"
-
-
   policy-request-body:
     type: "object"
     required:
@@ -515,10 +757,6 @@ definitions:
     - "requestorID"
     - "time_stamp"
     - "token"
-    - "function_type"
-    - "privacy_budget"
-    - "configuration_key"
-    - "file_key"
     properties:
       requestorID:
         type: "string"
@@ -539,22 +777,6 @@ definitions:
       dataID:
         type: "string"
         description: "Identifier of the shared dataset."
-      function_type:
-        type: "array"
-        items:
-          type: "string"
-        description: "supported function types for users' query"
-      privacy_budget:
-        type: "object"
-        additionalProperties:
-          type: "number" 
-        description: "privacy budget of each function type"
-      configuration_key:
-        type: "string"
-        description: "configuration key from the anonymisation service"
-      file_key:
-        type: "string"
-        description: "key for the uploaded file"
     description: "HTTP body defining the register operation for the /anonymisation/register\
       \ endpoint."
   anony-register-response:
@@ -571,7 +793,6 @@ definitions:
     required:
     - "dataID"
     - "data_consumer"
-    - "data_provider"
     - "function_type"
     - "request_budget"
     - "requestorID"
@@ -587,9 +808,6 @@ definitions:
       data_consumer:
         type: "string"
         description: "The name of the data consumer who receives a dataset."
-      data_provider:
-        type: "string"
-        description: "the name of the data provider who provides a dataset"
       dataID:
         type: "string"
         description: "The unique ID of a dataset"
@@ -647,7 +865,7 @@ definitions:
       token:
         type: "string"
         description: "a crypto token to validate if the entity is allowed to perform\
-          \ the requested operation."
+          \ the  requested operation."
       data_consumer:
         type: "string"
         description: "the name of the data consumer who receives a dataset"
@@ -663,7 +881,7 @@ definitions:
       anonymised_result:
         type: "number"
         description: "the anonymised result from anonymisation interface"
-    description: "HTTP body definiting the query operation for the /ri/anonymisation/receiveAnonyRes\
+    description: "HTTP body definiting the query operation for the  /ri/anonymisation/receiveAnonyRes\
       \ endpoint"
   receive-result-response:
     type: "object"
@@ -682,7 +900,6 @@ definitions:
   update-ledger-body:
     type: "object"
     required:
-    - "function_type"
     - "anonymised_result"
     - "dataID"
     - "data_consumer"
@@ -704,10 +921,7 @@ definitions:
       anonymised_result:
         type: "number"
         description: "the final anonymised result"
-      function_type:
-        type: "string"
-        description: "the function type of the query"
-    description: "HTTP body definiting the update ledger operation for the /ri/anonymisation/updateLedger\
+    description: "HTTP body definiting the update ledger operation for the  /ri/anonymisation/updateLedger\
       \ endpoint"
   update-ledger-response:
     type: "string"
@@ -783,10 +997,12 @@ definitions:
         description: "Quickly de/provision resources, dynamically adjust the amount\
           \ of resources allocated to an instance of a service (seconds to react)."
     description: "HTTP body defining the store operation for the /store endpoint."
-  sla-read-body:
+  alert-store:
     type: "object"
     required:
-    - "index"
+    - "alertBody"
+    - "alertSource"
+    - "alertType"
     - "requestorID"
     - "token"
     properties:
@@ -797,84 +1013,293 @@ definitions:
         type: "string"
         description: "A crypto token to validate if the entity is allowed to perform\
           \ the requested operation."
-      index:
-        type: "integer"
-        description: "Index of the requested data as provided during the store operation."
-    description: "HTTP body defining the read operation for the /read endpoint."
-  sla-store-response:
+      alertType:
+        type: "string"
+        description: "POLICY_VIOLATION_ALERT, created by the PVE, corresponds to an\
+          \ alert regarding a policy violation. REQ_RESP_DISCREPANCY_ALERT, created\
+          \ by the PVE, corresponds to an alert regarding a discrepancy of an XACML\
+          \ request/response. AUDIT_ALERT, created by the FSA, corresponds to an alert\
+          \ which is generated after performing offline analysis over the access control\
+          \ logs.SLA_ALERT, created by FAM, corresponds to an alert which is generated\
+          \ after an SLA violation is detected."
+        enum:
+        - "POLICY_VIOLATION_ALERT"
+        - "REQ_RESP_DISCREPANCY_ALERT"
+        - "AUDIT_ALERT"
+        - "SLA_ALERT"
+      alertSource:
+        type: "string"
+        description: "Refences the entity which has generated the alert."
+        enum:
+        - "PVE"
+        - "FSA"
+      alertBody:
+        type: "string"
+        description: "Base64 encoded alert."
+    description: "HTTP body defining the store operation for the /store endpoint."
+  monitoring-store:
     type: "object"
     required:
-    - "index"
-    properties:
-      index:
-        type: "integer"
-        description: "index of the stored metrics."
-    description: "HTTP response for a successful store operation."
-  sla-read-response:
-    type: "object"
-    required:
-    - "CPUPower"
-    - "availability"
-    - "bandwidth"
-    - "connections"
-    - "diskSpace"
-    - "elasticity"
-    - "memorySize"
+    - "data"
+    - "dataType"
+    - "loggerID"
+    - "monitoringID"
     - "requestorID"
-    - "responseTime"
-    - "throughput"
     - "timeStamp"
     - "token"
     properties:
       requestorID:
+        type: "string"
+        description: "Identifier of a particular protocol flow which is used to bind\
+          \ different access logs from different entities."
+      token:
+        type: "string"
+        description: "A crypto token to validate if the entity is allowed to perform\
+          \ the requested operation."
+      monitoringID:
+        type: "string"
+        description: "Identifier of a particular protocol flow which is used to bind\
+          \ different access logs from different entities. "
+      loggerID:
         type: "string"
         description: "Identifier of the requesting entity."
       timeStamp:
         type: "string"
         description: "The timestamp in the following format - \"2006-01-02 15:04:05\"\
           ."
+      dataType:
+        type: "string"
+        description: "REQUEST/RESPONE, can be one of these values.'"
+        enum:
+        - "REQUEST"
+        - "RESPONSE"
+      data:
+        type: "string"
+        description: "Base64 encoded XACML request/response."
+    description: "HTTP body defining the store operation for the /store endpoint and\
+      \ the read operation for the /read endpoint."
+  monitoring-response:
+    type: "object"
+    required:
+    - "monitoringID"
+    - "requestorID"
+    - "token"
+    properties:
+      requestorID:
+        type: "string"
+        description: "Identifier of the "
       token:
         type: "string"
         description: "A crypto token to validate if the entity is allowed to perform\
           \ the requested operation."
-      availability:
+      monitoringID:
         type: "string"
-        description: "The percentage availability of the cloud member resources for\
-          \ a billing cycle."
-      responseTime:
+        description: "Identifier of a particular protocol flow which is used to bind\
+          \ different access logs from different entities. "
+      list:
+        type: "array"
+        items:
+          $ref: "#/definitions/monitoringresponse_list"
+    description: "HTTP response containing the list of policies for the service."
+  state-service-store-body:
+    type: "object"
+    required:
+    - "name"
+    - "protocol"
+    - "requestorID"
+    - "serviceID"
+    - "tenantID"
+    - "token"
+    properties:
+      requestorID:
         type: "string"
-        description: "Exact time (seconds) between stimulus to the cloud service and\
-          \ corresponding service's response. The percentage a service manages to\
-          \ respond within the defined response time limit for a billing cycle."
-      CPUPower:
+        description: "Identifier of the requesting entity."
+      token:
         type: "string"
-        description: "Max. no. of processing power (Hertz) provided by CSP to customer\
-          \ to process his data."
-      diskSpace:
+        description: "A crypto token to validate if the entity is allowed to perform\
+          \ the requested operation."
+      serviceID:
         type: "string"
-        description: "Max. no. of available space (PetaBytes) provided by CSP to customer\
-          \ to store his data."
-      memorySize:
+        description: "Identifier of the service."
+      tenantID:
         type: "string"
-        description: "Max. no. of information (GigaBytes) the cloud service is able\
-          \ to hold for the customer to read/write his data."
-      bandwidth:
+        description: "Identifier of the tenant."
+      name:
         type: "string"
-        description: "Amount of outbound data transfers (GigaByte/month), customers\
-          \ will be given the ability to customize the cloud services, and corresponding\
-          \ SLAs, according to the demand and usage of the services."
-      throughput:
+        description: "Name of the service."
+      protocol:
         type: "string"
-        description: "Min. no. of requests that can be processed by the cloud service\
-          \ in a stated time period (GigaBytes/sec)."
-      connections:
+        description: "protocol used by the service."
+    description: "HTTP body defining the service store operation"
+  state-service-request-body:
+    type: "object"
+    required:
+    - "name"
+    - "protocol"
+    - "serviceID"
+    - "tenantID"
+    properties:
+      serviceID:
         type: "string"
-        description: "Max. no. of simultaneous connections."
-      elasticity:
+        description: "Identifier of the service."
+      tenantID:
         type: "string"
-        description: "Quickly de/provision resources, dynamically adjust the amount\
-          \ of resources allocated to an instance of a service (seconds to react)."
-    description: "HTTP response for a successful read operation."
+        description: "Identifier of the tenant."
+      name:
+        type: "string"
+        description: "Name of the service."
+      protocol:
+        type: "string"
+        description: "protocol used by the service."
+    description: "HTTP body defining the service store operation"
+  state-member-store-body:
+    type: "object"
+    required:
+    - "id"
+    - "name"
+    - "requestorID"
+    - "token"
+    properties:
+      requestorID:
+        type: "string"
+        description: "Identifier of the requesting entity."
+      token:
+        type: "string"
+        description: "A crypto token to validate if the entity is allowed to perform\
+          \ the requested operation."
+      id:
+        type: "string"
+        description: "Identifier of the member cloud."
+      name:
+        type: "string"
+        description: "Name of the service."
+    description: "HTTP body defining the service store operation"
+  state-member-request-body:
+    type: "object"
+    required:
+    - "id"
+    - "name"
+    properties:
+      id:
+        type: "string"
+        description: "Identifier of the member cloud."
+      name:
+        type: "string"
+        description: "Name of the service."
+    description: "HTTP body defining the service store operation"
+  state-tenant-store-body:
+    type: "object"
+    required:
+    - "id"
+    - "name"
+    - "requestorID"
+    - "token"
+    properties:
+      requestorID:
+        type: "string"
+        description: "Identifier of the requesting entity."
+      token:
+        type: "string"
+        description: "A crypto token to validate if the entity is allowed to perform\
+          \ the requested operation."
+      id:
+        type: "string"
+        description: "Identifier of the tenant."
+      name:
+        type: "string"
+        description: "Name of the tenant."
+    description: "HTTP body defining the service store operation"
+  state-tenant-store-member-body:
+    type: "object"
+    required:
+    - "cloudMemberID"
+    - "id"
+    properties:
+      id:
+        type: "string"
+        description: "Identifier of the tenant to wich add the member cloud"
+      cloudMemberID:
+        type: "string"
+        description: "Name of the cloud member to add to the tenant."
+    description: "HTTP body defining the service store operation"
+  state-vm-store-body:
+    type: "object"
+    required:
+    - "cloudMemberID"
+    - "disk"
+    - "id"
+    - "name"
+    - "os"
+    - "requestorID"
+    - "token"
+    properties:
+      requestorID:
+        type: "string"
+        description: "Identifier of the requesting entity."
+      token:
+        type: "string"
+        description: "A crypto token to validate if the entity is allowed to perform\
+          \ the requested operation."
+      id:
+        type: "string"
+        description: "Identifier of the vm."
+      name:
+        type: "string"
+        description: "Name of the vm."
+      os:
+        type: "string"
+        description: "Name of the os of the vm."
+      disk:
+        type: "string"
+        description: "Description of the disk of the vm."
+      cloudMemberID:
+        type: "string"
+        description: "Name of the cloud member owner of the id."
+    description: "HTTP body defining the service store operation"
+  state-vm-request-body:
+    type: "object"
+    required:
+    - "cloudMemberID"
+    - "disk"
+    - "id"
+    - "name"
+    - "os"
+    properties:
+      id:
+        type: "string"
+        description: "Identifier of the vm."
+      name:
+        type: "string"
+        description: "Name of the vm."
+      os:
+        type: "string"
+        description: "Name of the os of the vm."
+      disk:
+        type: "string"
+        description: "Description of the disk of the vm."
+      cloudMemberID:
+        type: "string"
+        description: "Name of the cloud member owner of the id."
+    description: "HTTP body defining the service store operation"
+  state-tenant-request-body:
+    type: "object"
+    required:
+    - "cloudMemberIDs"
+    - "id"
+    - "name"
+    properties:
+      id:
+        type: "string"
+        description: "Identifier of the member cloud."
+      name:
+        type: "string"
+        description: "Name of the service."
+      cloudMemberIDs:
+        type: "array"
+        description: "list of member cloud ids in the tenant"
+        items:
+          $ref: "#/definitions/statetenantrequestbody_cloudMemberIDs"
+    description: "HTTP body defining the service store operation"
   query-request:
     type: "object"
     required:
@@ -914,3 +1339,33 @@ definitions:
       policy:
         type: "string"
         description: "BASE64-enocded data of the policy."
+  monitoringresponse_list:
+    required:
+    - "data"
+    - "dataType"
+    - "loggerID"
+    - "timeStamp"
+    properties:
+      loggerID:
+        type: "string"
+        description: "Identifier of the requesting entity."
+      timeStamp:
+        type: "string"
+        description: "The timestamp in the following format - \"2006-01-02 15:04:05\"\
+          ."
+      dataType:
+        type: "string"
+        description: "REQUEST/RESPONE, can be one of these values.'"
+        enum:
+        - "REQUEST"
+        - "RESPONSE"
+      data:
+        type: "string"
+        description: "Base64 encoded XACML request/response."
+  statetenantrequestbody_cloudMemberIDs:
+    required:
+    - "memberId"
+    properties:
+      memberId:
+        type: "string"
+        description: "Specifies the id of the membet."
