@@ -17,7 +17,7 @@ exports.stateMember_readPOST = function(args, res, next) {
    * returns state-member-request-body
    **/
 
-  if(debug) console.log('---->SLI: stateMember_read method called');
+  if(debug) console.log('---->SLI: state_Member_read method called');
 
   var examples = {};
   examples['application/json'] = {
@@ -93,7 +93,7 @@ exports.stateMember_storePOST = function(args, res, next) {
    * returns ack-response
    **/
 
-  if (debug) console.log("-----> SLI: stateMember_Store method called");
+  if (debug) console.log("-----> SLI: state_Member_Store method called");
 
   var examples = {};
   examples['application/json'] = {
@@ -156,6 +156,7 @@ exports.stateService_readPOST = function(args, res, next) {
    * body Query-request Body in JSON cotaining the service id
    * returns state-service-request-body
    **/
+  if (debug) console.log("-----> SLI: state_Service_Read method called");
   var examples = {};
   examples['application/json'] = {
   "protocol" : "undefined",
@@ -209,7 +210,7 @@ exports.stateService_readPOST = function(args, res, next) {
     }).catch(err => {
         if(err.statusCode == 404) 
         {
-            if(debug) console.log("---->Member not found!");
+            if(debug) console.log("---->Service not found!");
             examples['application/json'].serviceID = args.body.value.dataId;
             examples['application/json'].tenantID = "none";
             examples['application/json'].name = "none";
@@ -237,6 +238,7 @@ exports.stateService_storePOST = function(args, res, next) {
    * body State-service-store-body Body in JSON
    * returns ack-response
    **/
+  if (debug) console.log("-----> SLI: state_Service_Store method called");
   var examples = {};
   examples['application/json'] = {
     "message" : "Service_store failed"
@@ -303,6 +305,7 @@ exports.stateTenant_addMemberPOST = function(args, res, next) {
    * body State-tenant-store-member-body Body in JSON
    * returns ack-response
    **/
+  if (debug) console.log("-----> SLI: state_Tenant_addMember method called");
   var examples = {};
   examples['application/json'] = {
   "message" : "add tenant member failed"
@@ -340,7 +343,7 @@ exports.stateTenant_addMemberPOST = function(args, res, next) {
     if(debug) console.log(value_content);
    
     //add member to the tenant
-    console.log(value_content.cloudMemberIDs);
+    //console.log(value_content.cloudMemberIDs);
     value_content.cloudMemberIDs.push({"memberId": args.body.value.cloudMemberID});
     
     //store the new tenant state
@@ -470,6 +473,7 @@ exports.stateTenant_readPOST = function(args, res, next) {
    * body Query-request Body in JSON cotaining the service id
    * returns state-tenant-request-body
    **/
+  if (debug) console.log("-----> SLI: state_Read_Tenant method called");
   var examples = {};
   examples['application/json'] = {
     "cloudMemberIDs" : [ {
@@ -550,6 +554,7 @@ exports.stateVm_readPOST = function(args, res, next) {
    * body Query-request Body in JSON cotaining the vm id
    * returns state-vm-request-body
    **/
+  if (debug) console.log("-----> SLI: state_VM_read method called");
   var examples = {};
   examples['application/json'] = {
   "disk" : "undefined",
@@ -605,7 +610,7 @@ exports.stateVm_readPOST = function(args, res, next) {
     }).catch(err => {
         if(err.statusCode == 404) 
         {
-            if(debug) console.log("---->Member not found!");
+            if(debug) console.log("---->VM not found!");
             examples['application/json'].id = args.body.value.dataId;
             examples['application/json'].name = "none";
             examples['application/json'].os = "none";
