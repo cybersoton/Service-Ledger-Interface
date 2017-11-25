@@ -305,14 +305,96 @@ exports.stateTenant_addMemberPOST = function(args, res, next) {
    **/
   var examples = {};
   examples['application/json'] = {
-  "message" : "aeiou"
+  "message" : "add tenant member failed"
   };
-  if (Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-    res.end();
+
+  var token = args.body.value.token;
+  var reqId = args.body.value.requestorID;
+  if (!utils.reqValidate(reqId,token)) {    
+      res.writeHead(401);
+      res.end('The authentication token is not valid!'); 
   }
+
+  var options = {
+    "key": args.body.value.id
+  };
+
+  rp({
+    method: 'POST',
+    uri: url.format({
+         protocol: 'http',
+         hostname: request_parameters.registry.ip,
+         port: request_parameters.registry.port,
+         pathname: request_parameters.path.registry_get
+    }),
+    body: options,
+    header:{'User-Agent': 'Service-Ledger-Interface'},
+    json: true
+  }).then(response => {
+    if(debug) {
+        if(debug) console.log("---->response from Service-Ledger: ");
+        if(debug) console.log(response);
+    }
+
+    var value_content = JSON.parse(response.message);
+    if(debug) console.log(value_content);
+   
+    //add member to the tenant
+    console.log(value_content.cloudMemberIDs);
+    value_content.cloudMemberIDs.push({"memberId": args.body.value.cloudMemberID});
+    
+    //store the new tenant state
+    options = {
+      "key": args.body.value.id,
+      "value": JSON.stringify({
+                name: value_content.name,
+                cloudMemberIDs: value_content.cloudMemberIDs
+    })};
+  
+    rp({
+      method: 'POST',
+      uri: url.format({
+           protocol: 'http',
+           hostname: request_parameters.registry.ip,
+           port: request_parameters.registry.port,
+           pathname: request_parameters.path.registry_put
+      }),
+      body: options,
+      header:{'User-Agent': 'Service-Ledger-Interface'},
+      json: true
+    }).then(response => {
+      if(debug) {
+          console.log("---->response from Service-Ledger: ");
+          console.log(response);
+      }
+  
+      examples['application/json'].message = response.message;
+  
+      if (Object.keys(examples).length > 0) {
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+      } else {
+        res.end();
+      }
+    }).catch();
+  }).catch(err => {
+      if(err.statusCode == 404) 
+      {
+          if(debug) console.log("---->Tenant not found!");
+          examples['application/json'].message = "Tenant not found";
+      } else { 
+          if(debug) console.log("---->error when request!");
+          console.log(err);
+          examples['application/json'].message = "error when get tenant";
+      }
+      if(Object.keys(examples).length > 0) {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+      } else {
+          res.end();
+      }
+  });
+
 }
 
 exports.stateTenant_createPOST = function(args, res, next) {
@@ -322,16 +404,63 @@ exports.stateTenant_createPOST = function(args, res, next) {
    * body State-tenant-store-body Body in JSON
    * returns ack-response
    **/
+
+  if (debug) console.log("-----> SLI: state_Create_Tenant method called");
+
   var examples = {};
   examples['application/json'] = {
-  "message" : "aeiou"
+  "message" : "create tenant failed"
   };
-  if (Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-    res.end();
+
+  var token = args.body.value.token;
+  var reqId = args.body.value.requestorID;
+  if (!utils.reqValidate(reqId,token)) {    
+      res.writeHead(401);
+      res.end('The authentication token is not valid!'); 
   }
+
+  var options = {
+    "key": args.body.value.id,
+    "value": JSON.stringify({
+              name: args.body.value.name,
+              cloudMemberIDs: []
+  })};
+
+  rp({
+    method: 'POST',
+    uri: url.format({
+         protocol: 'http',
+         hostname: request_parameters.registry.ip,
+         port: request_parameters.registry.port,
+         pathname: request_parameters.path.registry_put
+    }),
+    body: options,
+    header:{'User-Agent': 'Service-Ledger-Interface'},
+    json: true
+  }).then(response => {
+    if(debug) {
+        console.log("---->response from Service-Ledger: ");
+        console.log(response);
+    }
+
+    examples['application/json'].message = response.message;
+
+    if (Object.keys(examples).length > 0) {
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+    } else {
+      res.end();
+    }
+  }).catch(err => {
+    if(debug) console.log(err);
+    if (Object.keys(examples).length > 0) {
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+    } else {
+      res.end();
+    }
+  });
+
 }
 
 exports.stateTenant_readPOST = function(args, res, next) {
@@ -343,18 +472,75 @@ exports.stateTenant_readPOST = function(args, res, next) {
    **/
   var examples = {};
   examples['application/json'] = {
-  "cloudMemberIDs" : [ {
-    "memberId" : "aeiou"
-  } ],
-  "name" : "aeiou",
-  "id" : "aeiou"
+    "cloudMemberIDs" : [ {
+        "memberId" : "undefined"
+    }],
+    "name" : "undefined",
+    "id" : "undefined"
   };
-  if (Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-    res.end();
+
+  var token = args.body.value.token;
+  var reqId = args.body.value.requestorID;
+  if (!utils.reqValidate(reqId,token)) {    
+        res.writeHead(401);
+        res.end('The authentication token is not valid!'); 
   }
+
+  var options = {
+      "key": args.body.value.dataId
+  };
+
+  rp({
+      method: 'POST',
+      uri: url.format({
+           protocol: 'http',
+           hostname: request_parameters.registry.ip,
+           port: request_parameters.registry.port,
+           pathname: request_parameters.path.registry_get
+      }),
+      body: options,
+      header:{'User-Agent': 'Service-Ledger-Interface'},
+      json: true
+  }).then(response => {
+      if(debug) {
+          if(debug) console.log("---->response from Service-Ledger: ");
+          if(debug) console.log(response);
+      }
+
+      var value_content = JSON.parse(response.message);
+      if(debug) console.log(value_content);
+     
+      examples['application/json'].id = args.body.value.dataId
+      examples['application/json'].name = value_content.name;
+      examples['application/json'].cloudMemberIDs = value_content.cloudMemberIDs;
+
+     if(Object.keys(examples).length > 0) {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+      } else {
+          res.end();
+      }
+    }).catch(err => {
+        if(err.statusCode == 404) 
+        {
+            if(debug) console.log("---->Tenant not found!");
+            examples['application/json'].id = args.body.value.dataId;
+            examples['application/json'].name = "none";
+            examples['application/json'].cloudMemberIDs = [{"memberId" : "none"}];
+        } else { 
+            if(debug) console.log("---->error when request!");
+            examples['application/json'].id = args.body.value.dataId;
+            examples['application/json'].name = "error";
+            examples['application/json'].cloudMemberIDs = [{"memberId" : "error"}];
+        }
+        if(Object.keys(examples).length > 0) {
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+        } else {
+            res.end();
+        }
+    });
+
 }
 
 exports.stateVm_readPOST = function(args, res, next) {
