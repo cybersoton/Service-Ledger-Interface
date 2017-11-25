@@ -3,4 +3,5 @@
 *.class
 *.log
 
+server/node_modules/*
 swagger-codegen-cli.jar
