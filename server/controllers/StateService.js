@@ -306,7 +306,7 @@ exports.stateTenant_addMemberPOST = function(args, res, next) {
   var examples = {};
   examples['application/json'] = {
   "message" : "aeiou"
-};
+  };
   if (Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
@@ -325,7 +325,7 @@ exports.stateTenant_createPOST = function(args, res, next) {
   var examples = {};
   examples['application/json'] = {
   "message" : "aeiou"
-};
+  };
   if (Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
@@ -348,7 +348,7 @@ exports.stateTenant_readPOST = function(args, res, next) {
   } ],
   "name" : "aeiou",
   "id" : "aeiou"
-};
+  };
   if (Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
@@ -366,18 +366,81 @@ exports.stateVm_readPOST = function(args, res, next) {
    **/
   var examples = {};
   examples['application/json'] = {
-  "disk" : "aeiou",
-  "os" : "aeiou",
-  "name" : "aeiou",
-  "id" : "aeiou",
-  "cloudMemberID" : "aeiou"
-};
-  if (Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-    res.end();
+  "disk" : "undefined",
+  "os" : "undefined",
+  "name" : "undefined",
+  "id" : "undefined",
+  "cloudMemberID" : "undefined"
+  };
+
+  var token = args.body.value.token;
+  var reqId = args.body.value.requestorID;
+  if (!utils.reqValidate(reqId,token)) {    
+        res.writeHead(401);
+        res.end('The authentication token is not valid!'); 
   }
+
+  var options = {
+      "key": args.body.value.dataId
+  };
+
+  rp({
+      method: 'POST',
+      uri: url.format({
+           protocol: 'http',
+           hostname: request_parameters.registry.ip,
+           port: request_parameters.registry.port,
+           pathname: request_parameters.path.registry_get
+      }),
+      body: options,
+      header:{'User-Agent': 'Service-Ledger-Interface'},
+      json: true
+  }).then(response => {
+      if(debug) {
+          if(debug) console.log("---->response from Service-Ledger: ");
+          if(debug) console.log(response);
+      }
+
+      var value_content = JSON.parse(response.message);
+      if(debug) console.log(value_content);
+     
+      examples['application/json'].id = args.body.value.dataId;
+      examples['application/json'].name = value_content.name;
+      examples['application/json'].os = value_content.os;
+      examples['application/json'].disk = value_content.disk;
+      examples['application/json'].cloudMemberID = value_content.cloudMemberID;
+
+     if(Object.keys(examples).length > 0) {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+      } else {
+          res.end();
+      }
+    }).catch(err => {
+        if(err.statusCode == 404) 
+        {
+            if(debug) console.log("---->Member not found!");
+            examples['application/json'].id = args.body.value.dataId;
+            examples['application/json'].name = "none";
+            examples['application/json'].os = "none";
+            examples['application/json'].disk = "none";
+            examples['application/json'].cloudMemberID = "none";
+        } else { 
+            if(debug) console.log("---->error when request!");
+            examples['application/json'].id = args.body.value.dataId;
+            examples['application/json'].name = "error";
+            examples['application/json'].os = "error";
+            examples['application/json'].disk = "error";
+            examples['application/json'].cloudMemberID = "error";
+        }
+        if(Object.keys(examples).length > 0) {
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+        } else {
+            res.end();
+        }
+    });
+
 }
 
 exports.stateVm_storePOST = function(args, res, next) {
@@ -387,15 +450,63 @@ exports.stateVm_storePOST = function(args, res, next) {
    * body State-vm-store-body Body in JSON
    * returns ack-response
    **/
+
+  if (debug) console.log("-----> SLI: stateVM_Store method called");
+
   var examples = {};
   examples['application/json'] = {
-  "message" : "aeiou"
-};
-  if (Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-    res.end();
+  "message" : "vm store failed"
+  };
+
+  var token = args.body.value.token;
+  var reqId = args.body.value.requestorID;
+  if (!utils.reqValidate(reqId,token)) {    
+      res.writeHead(401);
+      res.end('The authentication token is not valid!'); 
   }
+
+  var options = {
+    "key": args.body.value.id,
+    "value": JSON.stringify({
+              name: args.body.value.name,
+              os: args.body.value.os,
+              disk: args.body.value.disk,
+              cloudMemberID: args.body.value.cloudMemberID
+  })};
+
+  rp({
+    method: 'POST',
+    uri: url.format({
+         protocol: 'http',
+         hostname: request_parameters.registry.ip,
+         port: request_parameters.registry.port,
+         pathname: request_parameters.path.registry_put
+    }),
+    body: options,
+    header:{'User-Agent': 'Service-Ledger-Interface'},
+    json: true
+  }).then(response => {
+    if(debug) {
+        console.log("---->response from Service-Ledger: ");
+        console.log(response);
+    }
+
+    examples['application/json'].message = response.message;
+
+    if (Object.keys(examples).length > 0) {
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+    } else {
+      res.end();
+    }
+  }).catch(err => {
+    if(debug) console.log(err);
+    if (Object.keys(examples).length > 0) {
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+    } else {
+      res.end();
+    }
+  });
 }
 
