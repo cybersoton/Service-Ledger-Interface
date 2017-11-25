@@ -172,7 +172,7 @@ exports.stateService_readPOST = function(args, res, next) {
   }
 
   var options = {
-      "key": args.body.value.serviceId
+      "key": args.body.value.dataId
   };
 
   rp({
@@ -195,7 +195,7 @@ exports.stateService_readPOST = function(args, res, next) {
       var value_content = JSON.parse(response.message);
       if(debug) console.log(value_content);
      
-      examples['application/json'].serviceID = args.body.value.serviceID;
+      examples['application/json'].serviceID = args.body.value.dataId
       examples['application/json'].tenantID = value_content.tenantID;
       examples['application/json'].name = value_content.name;
       examples['application/json'].protocol = value_content.protocol;
@@ -210,13 +210,13 @@ exports.stateService_readPOST = function(args, res, next) {
         if(err.statusCode == 404) 
         {
             if(debug) console.log("---->Member not found!");
-            examples['application/json'].serviceID = args.body.value.serviceID;
+            examples['application/json'].serviceID = args.body.value.dataId;
             examples['application/json'].tenantID = "none";
             examples['application/json'].name = "none";
             examples['application/json'].protocol = "none";
         } else { 
             if(debug) console.log("---->error when request!");
-            examples['application/json'].serviceID = args.body.value.serviceID;
+            examples['application/json'].serviceID = args.body.value.dataId;
             examples['application/json'].tenantID = "error";
             examples['application/json'].name = "error";
             examples['application/json'].protocol = "error";
