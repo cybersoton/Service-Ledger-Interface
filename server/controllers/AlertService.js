@@ -27,6 +27,41 @@ exports.alertReadPOST = function(args, res, next) {
     res.writeHead(401);
     res.end("The authentication token is not valid!");
   }
+
+  var dataId = args.body.value.dataId;
+  if(reqId == undefined || dataId == undefined) {
+    res.writeHead(401);
+    res.end("Invalid request! Required parameter(s) missing");
+  }
+
+  var body_post = {
+    "key": dataId
+  };
+
+  var headers = {
+    "Content-Type": "application/json"
+  }
+
+  var options = {
+    "url": registry_url + "get",
+    "method": "POST",
+    "headers": headers,
+    "json": body_post
+  };
+
+  var body_response = {};
+
+  request(options, function(error, response, body) {
+    if(error) {
+      res.writeHead(400, {"Content-Type": "application/json"});
+      res.end(JSON.stringify({"message": "error"}));
+    }
+    else if(response.statusCode == 200) {
+      console.log(body);
+      res.writeHead(200, {"Content-type": "application/json"});
+      res.end(body.message);
+    }
+  });
 }
 
 exports.alertStorePOST = function(args, res, next) {
@@ -43,13 +78,13 @@ exports.alertStorePOST = function(args, res, next) {
     res.end("The authentication token is not valid!");
   }
 
-  var dataId = args.body.value.dataId;
+  var alertId = args.body.value.alertID;
   var alertType = args.body.value.alertType;
   var alertSource = args.body.value.alertSource;
   var alertBody = args.body.value.alertBody;
   
   if(
-    dataId == undefined ||
+    alertId == undefined ||
     reqId == undefined ||
     alertType == undefined ||
     alertSource == undefined ||
@@ -60,7 +95,7 @@ exports.alertStorePOST = function(args, res, next) {
   }
 
   var body_post = {
-    "key": dataId,
+    "key": alertId,
     "value": JSON.stringify({
       "alertType": alertType,
       "alertSource": alertSource,
