@@ -20,7 +20,7 @@ exports.monitoringReadPOST = function(args, res, next) {
    * body Query-request Body in JSON
    * returns monitoring-response
    **/
-  var examples = {};
+/*  var examples = {};
   examples['application/json'] = {
   "requestorID" : "aeiou",
   "list" : [ {
@@ -31,7 +31,7 @@ exports.monitoringReadPOST = function(args, res, next) {
   } ],
   "token" : "aeiou",
   "monitoringID" : "aeiou"
-};
+};*/
   var token = args.body.value.token;
   var reqId = args.body.value.requestorID;
 
@@ -83,15 +83,61 @@ exports.monitoringStorePOST = function(args, res, next) {
    * body Monitoring-store Body in JSON
    * returns ack-response
    **/
-  var examples = {};
-  examples['application/json'] = {
-  "message" : "aeiou"
-};
-  if (Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-    res.end();
+
+  var token = args.body.value.token;
+  var reqId = args.body.value.requestorID;
+  if(!utils.reqValidate(reqId, token)) {
+    res.writeHead(401);
+    res.end("The authentication token is not valid!");
   }
+
+  var monitoringId = args.body.value.monitoringID;
+  var loggerId = args.body.value.loggerID;
+  var timeStamp = args.body.value.timeStamp;
+  var dataType = args.body.value.dataType;
+  var data = args.body.value.data;
+
+  if(
+   monitoringId == undefined ||
+   loggerId == undefined ||
+   timeStamp == undefined ||
+   dataType == undefined ||
+   data == undefined
+  ) {
+    res.writeHead(400);
+    res.end("Invalid request! Required parameters missing!");
+  }
+
+  var body_post = {
+    "key": monitoringId,
+    "value": JSON.stringify({
+      "loggerID": loggerId,
+      "timeStamp": timeStamp,
+      "dataType": dataType,
+      "data": data
+    })
+  };
+
+  var headers = {
+    "Content-Type": "application/json"
+  }
+
+  var options = {
+    "url": registry_url + "put",
+    "method": "POST",
+    "headers": headers,
+    "json": body_post
+  };
+
+  request(options, function(error, response, body) {
+    if(error) {
+      res.writeHead(400, {"Content-Type": "application/json"});
+      res.end(JSON.stringify({"message": error}));
+    }
+    else if(response.statusCode == 200) {
+      res.writeHead(200, {"Content-Type": "application/json"});
+      res.end(JSON.stringify(body));
+    }
+  });
 }
 
