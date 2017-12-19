@@ -696,7 +696,7 @@ paths:
     post:
       tags:
       - "proposal"
-      description: "Submitting a proposal \n"
+      description: "vote for a submitted a proposal \n"
       operationId: "proposalVoteProposalPOST"
       consumes:
       - "application/json"
@@ -712,6 +712,32 @@ paths:
           description: "The response body for a successful response."
           schema:
             $ref: "#/definitions/ack-response"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "Proposal"
+  /proposal/countVotes:
+    post:
+      tags:
+      - "proposal"
+      description: "Request a votes counting to validate a stored proposal \n"
+      operationId: "proposalCountVotesPOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/countvotes-proposal-body"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/countvotes-proposal-response"
         400:
           description: "Invalid request, required parameter(s) missing."
         401:
@@ -1420,47 +1446,62 @@ definitions:
   submit-proposal-body:
     type: "object"
     required:
-    - "proposal"
+    - "proposalDescription"
     - "proposalID"
+    - "proposalQuorum"
+    - "proposalStatus"
+    - "proposalType"
     - "requestorID"
-    - "token"
-    - "typeProposal"
+    - "votersNumber"
     properties:
       requestorID:
         type: "string"
         description: "Identifier of the requesting entity."
-      token:
-        type: "string"
-        description: "A crypto token to validate if the entity is allowed to perform\
-          \ the requested operation."
       proposalID:
         type: "string"
         description: "identifier of the proposal."
-      typeProposal:
-        type: "string"
-        enum:
-        - "JOIN"
-        - "LEAVE"
-        - "UPDATE"
-      proposal:
+      proposalDescription:
         type: "string"
         description: "body of the proposal."
+      proposalType:
+        type: "string"
+        description: "It defines what is the type of the proposal"
+        enum:
+        - "join"
+        - "leave"
+        - "update"
+      proposalQuorum:
+        type: "string"
+        description: "It defines what is the quorumdesired quorum for the submitted\
+          \ proposal"
+        enum:
+        - "unanimity"
+        - "majority"
+        - "oneThird"
+      proposalStatus:
+        type: "string"
+        description: "It indicates the curent status of a proposal at the beginning\
+          \ will be submitted as \"pending\", after a vote session become \"accepted\"\
+          \ or \"rejected\""
+        enum:
+        - "pending"
+        - "accepted"
+        - "rejected"
+      votersNumber:
+        type: "string"
+        description: "It defines what is the quorumdesired quorum for the submitted\
+          \ proposal"
     description: "body for sumitting a porposal for the federation"
   vote-proposal-body:
     type: "object"
     required:
     - "memberID"
     - "proposalID"
-    - "token"
     - "vote"
     properties:
       memberID:
         type: "string"
         description: "Identifier of the voter member."
-      token:
-        type: "string"
-        description: "A crypto token to validate if the entity is allowed to perform\
-          \ the requested operation."
       proposalID:
         type: "string"
         description: "identifier of the proposal."
@@ -1468,20 +1509,43 @@ definitions:
         type: "string"
         description: "body of the proposal."
     description: "vote for a submitted proposal."
-  get-proposal-body:
+  countvotes-proposal-body:
     type: "object"
     required:
     - "proposalID"
+    properties:
+      proposalID:
+        type: "string"
+        description: "identifier of the proposal."
+    description: "request a votes counting to validate the proposal"
+  countvotes-proposal-response:
+    type: "object"
+    required:
+    - "proposalID"
+    - "proposalStatus"
     - "requestorID"
-    - "token"
     properties:
       requestorID:
         type: "string"
         description: "Identifier of the requesting entity."
-      token:
+      proposalID:
         type: "string"
-        description: "A crypto token to validate if the entity is allowed to perform\
-          \ the requested operation."
+        description: "identifier of the proposal."
+      proposalStatus:
+        type: "string"
+        description: "It indicates the curent status of a proposal at the beginning\
+          \ will be submitted as \"pending\", after a vote session become \"accepted\"\
+          \ or \"rejected\""
+        enum:
+        - "pending"
+        - "accepted"
+        - "rejected"
+    description: "response message body of the countVote function"
+  get-proposal-body:
+    type: "object"
+    required:
+    - "proposalID"
+    properties:
       proposalID:
         type: "string"
         description: "Identifier of the proposal."
@@ -1489,29 +1553,51 @@ definitions:
   get-proposal-response:
     type: "object"
     required:
-    - "proposal"
+    - "proposalDescription"
     - "proposalID"
+    - "proposalQuorum"
     - "proposalStatus"
-    - "typeProposal"
+    - "proposalType"
+    - "requestorID"
+    - "votersNumber"
     properties:
+      requestorID:
+        type: "string"
+        description: "Identifier of the requesting entity."
       proposalID:
         type: "string"
-        description: "Itendifier of the proposal."
-      typeProposal:
+        description: "identifier of the proposal."
+      proposalDescription:
         type: "string"
+        description: "body of the proposal."
+      proposalType:
+        type: "string"
+        description: "It defines what is the type of the proposal"
         enum:
-        - "JOIN"
-        - "LEAVE"
-        - "UPDATE"
+        - "join"
+        - "leave"
+        - "update"
+      proposalQuorum:
+        type: "string"
+        description: "It defines what is the quorumdesired quorum for the submitted\
+          \ proposal"
+        enum:
+        - "unanimity"
+        - "majority"
+        - "oneThird"
       proposalStatus:
         type: "string"
-        description: "Itendifier of the pcurrent satus of the votes of the porposal."
-      proposal:
-        type: "array"
-        description: "proposal infos about its descripton and the member who propose\
-          \ it."
-        items:
-          $ref: "#/definitions/getproposalresponse_proposal"
+        description: "It indicates the curent status of a proposal at the beginning\
+          \ will be submitted as \"pending\", after a vote session become \"accepted\"\
+          \ or \"rejected\""
+        enum:
+        - "pending"
+        - "accepted"
+        - "rejected"
+      votersNumber:
+        type: "string"
+        description: "It defines what is the quorumdesired quorum for the submitted\
+          \ proposal"
     description: "response message body of the getProposal function"
   query-request:
     type: "object"
@@ -1582,19 +1668,3 @@ definitions:
       memberId:
         type: "string"
         description: "Specifies the id of the membet."
-  getproposalresponse_proposal:
-    required:
-    - "proposalDescription"
-    - "proposalQuorum"
-    - "proposerId"
-    properties:
-      proposerId:
-        type: "string"
-        description: "Specifies the id of who make the proposal."
-      proposalDescription:
-        type: "string"
-        description: "specifies the description of the proposal to vote."
-      proposalQuorum:
-        type: "string"
-        description: "this value is the number of voted needed to achieve acceptthe\
-          \ proposal."
