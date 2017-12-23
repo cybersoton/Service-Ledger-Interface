@@ -16,18 +16,6 @@ exports.proposalCountVotesPOST = function(args, res, next) {
    * body Countvotes-proposal-body Body in JSON
    * returns countvotes-proposal-response
    **/
-  var examples = {};
-  examples['application/json'] = {
-    "proposalID": "aeiou",
-    "requestorID": "aeiou",
-    "proposalStatus": "aeiou"
-  };
-  if (Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-    res.end();
-  }
 
   var options = [
     args.body.value.proposalID
@@ -103,15 +91,6 @@ exports.proposalGetProposalPOST = function(args, res, next) {
    * returns get-proposal-response
    **/
   var examples = {};
-  examples['application/json'] = {
-    "requestorID" : "aeiou",
-    "proposalID" : "aeiou",
-    "proposalDescription" : "aeiou",
-    "proposalType" : "aeiou",
-    "proposalQuorum" : "aeiou",
-    "votersNumber" : "aeiou",
-    "proposalStatus" : "aeiou"
-  };
 
   var options = [
     args.body.value.proposalID
@@ -138,12 +117,15 @@ exports.proposalGetProposalPOST = function(args, res, next) {
     json: true
   }).then(response => {
     if(debug) {
-        console.log("---->response from Service-Ledger: ");
-        console.log(response);
+      console.log("---->response from Service-Ledger: ");
+      console.log(response);
 
-        var response_str = response.message;
-        var response_clean = response_str.split('payload:')[1];
-        console.log(response_clean); //messagio da parseare dopo il payload
+      var response_str = response.message;
+      var response_clean = response_str.split('payload:')[1];
+      console.log(response_clean); //messagio da parseare dopo il payload
+      response_clean = response_clean.replace(/\'/g, "\"");
+      var value_ = JSON.parse(response_clean);
+      console.log(value_.requestor); //messagio da parseare dopo il payload
     }
 
     var value_content = JSON.parse(response.message);
