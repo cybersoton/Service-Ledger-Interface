@@ -43,10 +43,10 @@ exports.proposalCountVotesPOST = function(args, res, next) {
     }),
     body: 
     {
-      "channel": "sunfish-channel",
-      "peer": "string",
-      "chaincodeName": "countVote",
-      "fcn": "string",
+      "channel": "mychannel",
+      "peer": "0",
+      "chaincodeName": "governance-01",
+      "fcn": "countVote",
       "args": options
     },
     header:{'User-Agent': 'Service-Ledger-Interface'},
@@ -117,12 +117,6 @@ exports.proposalGetProposalPOST = function(args, res, next) {
     "proposalID" : "aeiou",
     "proposalDescription" : "aeiou"
   };
-  if (Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-    res.end();
-  }
 
   var options = [
     args.body.value.proposalID
@@ -139,10 +133,10 @@ exports.proposalGetProposalPOST = function(args, res, next) {
     }),
     body: 
     {
-      "channel": "sunfish-channel",
-      "peer": "string",
-      "chaincodeName": "getProposal",
-      "fcn": "string",
+      "channel": "mychannel",
+      "peer": "0",
+      "chaincodeName": "governance-01",
+      "fcn": "getProposal",
       "args": options
     },
     header:{'User-Agent': 'Service-Ledger-Interface'},
@@ -155,7 +149,9 @@ exports.proposalGetProposalPOST = function(args, res, next) {
 
     var value_content = JSON.parse(response.message);
     if(debug) console.log(value_content);
-
+    if(debug) console.log("PAYLOAD:");
+    if(debug) console.log(value_content.payload);
+    
     // TODO: verificare se la lettura del LOG contenga i dati necessari
     examples['application/json'].proposalID = args.body.value.proposalID;
     examples['application/json'].proposalStatus = value_content.proposalStatus;
@@ -229,10 +225,10 @@ exports.proposalSubmitProposalPOST = function(args, res, next) {
     }),
     body:
     {
-      "channel": "sunfish-channel",
-      "peer": "string",
-      "chaincodeName": "submitProposal",
-      "fcn": "string",
+      "channel": "mychannel",
+      "peer": "0",
+      "chaincodeName": "governance-01",
+      "fcn": "submitProposal",
       "args": options
     },
     header:{'User-Agent': 'Service-Ledger-Interface'},
@@ -290,10 +286,10 @@ exports.proposalVoteProposalPOST = function(args, res, next) {
     }),
     body: 
     {
-      "channel": "sunfish-channel",
-      "peer": "string",
-      "chaincodeName": "vote",
-      "fcn": "string",
+      "channel": "mychannel",
+      "peer": "0",
+      "chaincodeName": "governance-01",
+      "fcn": "vote",
       "args": options
     },
     header:{'User-Agent': 'Service-Ledger-Interface'},
