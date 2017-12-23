@@ -17,6 +17,14 @@ exports.proposalCountVotesPOST = function(args, res, next) {
    * returns countvotes-proposal-response
    **/
 
+  var examples = {};
+  examples['application/json'] = {
+    "requestorID" : "aeiou",
+    "proposalID" : "aeiou",
+    "proposalStatus" : "aeiou"
+  };
+
+
   var options = [
     args.body.value.proposalID
   ];
@@ -40,19 +48,20 @@ exports.proposalCountVotesPOST = function(args, res, next) {
     header:{'User-Agent': 'Service-Ledger-Interface'},
     json: true
   }).then(response => {
-    if(debug) {
-        if(debug) console.log("---->response from Service-Ledger: ");
-        if(debug) console.log(response);
-    }
+    
+    console.log("---->response from Service-Ledger: ");
+    console.log(response);
+    
 
-    var value_content = JSON.parse(response.message);
-    if(debug) console.log(value_content);
-
-    // TODO: verificare se la lettura del LOG contenga i dati necessari
-    examples['application/json'].requestorID = value_content.requestorID;
-    examples['application/json'].proposalID = args.body.value.proposalID;
-    examples['application/json'].proposalStatus = value_content.proposalStatus;
-
+    var response_str = response.message;
+    var response_clean = response_str.split('payload:')[1];
+    console.log(response_clean); //messagio da parseare dopo il payload
+    response_clean = response_clean.replace(/\'/g, "\"");
+    var value_ = JSON.parse(response_clean);
+    
+    examples['application/json'].requestorID = value_.requestor;
+    examples['application/json'].proposalID = value_.ID;
+    examples['application/json'].proposalStatus = value_.status;
 
     if (Object.keys(examples).length > 0) {
       res.setHeader('Content-Type', 'application/json');
@@ -90,7 +99,17 @@ exports.proposalGetProposalPOST = function(args, res, next) {
    * body Get-proposal-body Body in JSON
    * returns get-proposal-response
    **/
+
   var examples = {};
+   examples['application/json'] = {
+     "requestorID" : "aeiou",
+     "proposalStatus" : "aeiou",
+     "votersNumber" : "aeiou",
+     "proposalType" : "aeiou",
+     "proposalQuorum" : "aeiou",
+     "proposalID" : "aeiou",
+     "proposalDescription" : "aeiou"
+   };
 
   var options = [
     args.body.value.proposalID
@@ -116,31 +135,26 @@ exports.proposalGetProposalPOST = function(args, res, next) {
     header:{'User-Agent': 'Service-Ledger-Interface'},
     json: true
   }).then(response => {
-    if(debug) {
-      console.log("---->response from Service-Ledger: ");
-      console.log(response);
+    console.log("---->response from Service-Ledger: ");
+    console.log(response);
 
-      var response_str = response.message;
-      var response_clean = response_str.split('payload:')[1];
-      console.log(response_clean); //messagio da parseare dopo il payload
-      response_clean = response_clean.replace(/\'/g, "\"");
-      var value_ = JSON.parse(response_clean);
-      console.log(value_.requestor); //messagio da parseare dopo il payload
-    }
-
-    var value_content = JSON.parse(response.message);
-    if(debug) console.log(value_content);
-    if(debug) console.log(value_content.payload);
+    var response_str = response.message;
+    var response_clean = response_str.split('payload:')[1];
+    console.log(response_clean); //messagio da parseare dopo il payload
+    response_clean = response_clean.replace(/\'/g, "\"");
+    var value_ = JSON.parse(response_clean);
+    
     
     // TODO: verificare se la lettura del LOG contenga i dati necessari
-    examples['application/json'].requestorID = value_content.proposalID;
-    examples['application/json'].proposalID = args.body.value.proposalID;
-    examples['application/json'].proposalDescription = value_content.proposalDescription;
-    examples['application/json'].proposalType = value_content.proposalType;
-    examples['application/json'].proposalQuorum = value_content.proposalQuorum;
-    examples['application/json'].votersNumber = value_content.votersNumber;
-    examples['application/json'].proposalStatus = value_content.proposalStatus;
-
+    examples['application/json'].requestorID = value_.requestor;
+    examples['application/json'].proposalID = value_.ID;
+    examples['application/json'].proposalType = value_.type;
+    examples['application/json'].proposalDescription = value_.description;
+    examples['application/json'].proposalQuorum = value_.quorum;
+    examples['application/json'].votersNumber = value_.votersNumber;
+    examples['application/json'].proposalStatus = value_.status;
+    
+    console.log(examples); //messagio da parseare dopo il payload
 
     if(Object.keys(examples).length > 0) {
       res.setHeader('Content-Type', 'application/json');
@@ -149,6 +163,7 @@ exports.proposalGetProposalPOST = function(args, res, next) {
          res.end();
     }
   }).catch(err => {
+    console.log(err);
     if (err.statusCode == 404)
     {
 			console.log("---->Proposal not found!");
@@ -201,23 +216,16 @@ exports.proposalSubmitProposalPOST = function(args, res, next) {
     header:{'User-Agent': 'Service-Ledger-Interface'},
     json: true
   }).then(response => {
-    if(debug) {
-        console.log("---->response from Service-Ledger: ");
-        console.log(response);
-        var response_clean = response.substr(0, 5);
-        console.log("###### CLEAN ######");
-        console.log(response_clean);
-        console.log("###### CLEAN ######");
-    }
+    
+    console.log("---->response from Service-Ledger: ");
+    console.log(response);
+    // var response_clean = response.substr(0, 5);
+    // console.log("###### CLEAN ######");
+    // console.log(response_clean);
+    
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({message: "Proposal successfully submitted"}));
 
-    examples['application/json'].message = response.message;
-
-    if (Object.keys(examples).length > 0) {
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-    } else {
-      res.end();
-    }
   }).catch(err => {
     //if(debug) console.log(err);
     if (Object.keys(examples).length > 0) {
@@ -266,26 +274,15 @@ exports.proposalVoteProposalPOST = function(args, res, next) {
     header:{'User-Agent': 'Service-Ledger-Interface'},
     json: true
   }).then(response => {
-    if(debug) {
-        if(debug) console.log("---->response from Service-Ledger: ");
-        if(debug) console.log(response);
-    }
-
-   var value_content = JSON.parse(response.message);
-    if(debug) console.log(value_content);
-
-    // TODO: verificare se la lettura del LOG contenga i dati necessari
-    examples['application/json'].message = response.message;
-
+    console.log("---->response from Service-Ledger: ");
+    console.log(response);
+    
     //aggiustare il parsing
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({message: "Proposal successfully voted."}));
 
-    if(Object.keys(examples).length > 0) {
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-    } else {
-          res.end();
-    }
   }).catch(err => {
+    console.log(err);
     if(err.statusCode == 404)
     {
       if(debug) console.log("---->Proposal to be voted not found!");
