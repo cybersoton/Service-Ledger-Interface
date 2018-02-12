@@ -30,7 +30,7 @@ Note that you probably also need to have installed on the machine *make* and *gy
 Remember to execute the installation as superuser.
 
 
-### Registry-Interface set-up
+### Service-Ledger-Interface set-up
 
 To set the service, execute the following commands
 ``` 
