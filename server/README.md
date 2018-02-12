@@ -1,1 +1,1 @@
-Node.js files implementing the Registry Interface
+Node.js files implementing the ServiceLedger Interface
