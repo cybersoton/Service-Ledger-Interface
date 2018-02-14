@@ -8,10 +8,10 @@ request_parameters:
     ip: localhost
     port: 8090
   path:
-    registry_get: /r/get
-    registry_put: /r/put
-    registry_delete: /r/delete
-    registry_invoke: /r/invokeCC
+    registry_get: /sl/get
+    registry_put: /sl/put
+    registry_delete: /sl/delete
+    registry_invoke: /sl/invoke
   token:
     chaincode_auth: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1MDk2NzM4NzUsInVzZXJuYW1lIjoiSmltIiwib3JnTmFtZSI6Im9yZzEiLCJpYXQiOjE1MDk2Mzc4NzV9.pERRFHhwZ0oBihn-d0CQmsKV0FYNUb1R2YWMcyRmeyI 
 

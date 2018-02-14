@@ -6,7 +6,11 @@ var assert = require('assert');
 var registry_ip = config.get('request_parameters.registry.ip');
 var registry_port = config.get('request_parameters.registry.port');
 //registry url
-var registry_url = 'http://' + registry_ip + ':' + registry_port + '/' + 'r' + '/';
+var registry_url = 'http://' + registry_ip + ':' + registry_port;
+
+var request_parameters = config.get('request_parameters');
+
+
 
 //utils
 var utils = require('../util/utils.js');
@@ -47,7 +51,7 @@ exports.dmDeletePOST = function(args, res, next) {
    
 	// Configure the request
 	var options = {
-	    url: registry_url + 'delete',
+	    url: registry_url + request_parameters.path.registry_delete,
 	    method: 'POST',
 	    headers: headers,
 	    json: body_post
@@ -108,7 +112,7 @@ exports.dmReadPOST = function(args, res, next) {
    
 	// Configure the request
 	var options = {
-	    url: registry_url + 'get',
+	    url: registry_url + request_parameters.path.registry_get,
 	    method: 'POST',
 	    headers: headers,
 	    json: body_post
@@ -173,7 +177,7 @@ exports.dmStorePOST = function(args, res, next) {
    
 	// Configure the request
 	var options = {
-	    url: registry_url + 'put',
+	    url: registry_url + request_parameters.path.registry_put,
 	    method: 'POST',
 	    headers: headers,
 	    json: body_post

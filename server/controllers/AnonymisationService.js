@@ -15,7 +15,7 @@ exports.anonymisationRegisterToRegistry = function(args, res, next) {
    * body Anony-register-body Body in JSON
    * returns anony-register-response
    **/
-  if(debug) console.log(`--->RI: anonymisationRegisterToRegistry method called`);
+  if(debug) console.log(`--->SLI: anonymisationRegisterToRegistry method called`);
   var examples = {};
       examples['application/json'] = {
       "message" : "register failed"
@@ -34,7 +34,7 @@ exports.anonymisationRegisterToRegistry = function(args, res, next) {
                 "key": "functionTypes",
                 "value": JSON.stringify(args.body.value.function_type)
             },
-      header: {'User-Agent': 'Registry-Interface'},
+      header: {'User-Agent': 'ServiceLedger-Interface'},
       json: true
   });
 
@@ -51,7 +51,7 @@ exports.anonymisationRegisterToRegistry = function(args, res, next) {
                 "key": "privacyBudget",
                 "value": JSON.stringify(args.body.value.privacy_budget)
             },
-      header: {'User-Agent': 'Registry-Interface'},
+      header: {'User-Agent': 'ServiceLedger-Interface'},
       json: true
   });
 
@@ -68,7 +68,7 @@ exports.anonymisationRegisterToRegistry = function(args, res, next) {
                 "key": "configurationKey",
                 "value": JSON.stringify(args.body.value.configuration_key)
             },
-      header: {'User-Agent': 'Registry-Interface'},
+      header: {'User-Agent': 'ServiceLedger-Interface'},
       json: true
   });
   
@@ -85,7 +85,7 @@ exports.anonymisationRegisterToRegistry = function(args, res, next) {
                 "key": "fileKey", 
                 "value": JSON.stringify(args.body.value.file_key)
             },
-      header: {'User-Agent': 'Registry-Interface'},
+      header: {'User-Agent': 'ServiceLedger-Interface'},
       json: true
   }).then(response => {
   
@@ -99,7 +99,7 @@ exports.anonymisationRegisterToRegistry = function(args, res, next) {
       }
 
   }).catch(err => {
-      console.log("---->RI: register to Registry failed!");
+      console.log("---->SLI: register to ServiceLedger failed!");
       if (Object.keys(examples).length > 0) {
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
@@ -116,7 +116,7 @@ exports.anonymisationQueryOldRes = function(args, res, next) {
    * body Anony-query-body Body in JSON
    * returns anony-query-response
    **/
-  if(debug) console.log("--->RI: anonymisationQueryOldRes method called!");
+  if(debug) console.log("--->SLI: anonymisationQueryOldRes method called!");
   
   var examples = {};
   
@@ -130,7 +130,7 @@ exports.anonymisationQueryOldRes = function(args, res, next) {
 
   var options = args.body.value;
   if(debug) {
-      console.log("---->RI send request to Registry: ");
+      console.log("---->SLI send request to ServiceLedger: ");
   }
 
   var remain_budget = -1;
@@ -144,7 +144,7 @@ exports.anonymisationQueryOldRes = function(args, res, next) {
             pathname: request_parameters.path.registry_get
          }),
     body: {"key": "privacyBudget"},
-    header: {'User-Agent': 'Registry-Interface'},
+    header: {'User-Agent': 'ServiceLedger-Interface'},
     json: true
   }).then(response => {
     var obj = JSON.parse(response.message);
@@ -165,12 +165,12 @@ exports.anonymisationQueryOldRes = function(args, res, next) {
               pathname: request_parameters.path.registry_get
         }),
         body: {"key": args.body.value.function_type},
-        header: {'User-Agent': 'Registry-Interface'},
+        header: {'User-Agent': 'ServiceLedger-Interface'},
         json: true
     }).then(response => {
     //old result exist
     if(debug) {
-        console.log("---->response the Registry: ");
+        console.log("---->response the ServiceLedger: ");
         console.log(response);
     }
     let old_result_exist = true;
@@ -237,7 +237,7 @@ exports.anonymisationReceiveAnonyRes = function(args, res, next) {
    * body receive-anony-res body in JSON
    * returns receive-anony-res-response
    **/
-  if(debug) console.log(`--->RI: anonymisationReceiveAnonyRes method called`);
+  if(debug) console.log(`--->SLI: anonymisationReceiveAnonyRes method called`);
 
   var examples = {};
   examples['application/json'] = {
@@ -272,7 +272,7 @@ exports.anonymisationReceiveAnonyRes = function(args, res, next) {
             pathname: request_parameters.path.registry_invoke
       }),
       body: options,
-      header: {'User-Agent': 'Registry-Interface'},
+      header: {'User-Agent': 'ServiceLedger-Interface'},
       json: true
   }).then(response => {
       if(debug) {
@@ -306,7 +306,7 @@ exports.anonymisationReceiveAnonyRes = function(args, res, next) {
 exports.anonymisationUpdateLedger = function(args, res, next) {
 
   if(debug) {
-      console.log(`--->RI: anonymisationUpdateLedgeer method called. args: `);
+      console.log(`--->SLI: anonymisationUpdateLedgeer method called. args: `);
       console.log(args);
   }
 
@@ -328,11 +328,11 @@ exports.anonymisationUpdateLedger = function(args, res, next) {
         "key": args.body.value.function_type,
         "value": args.body.value.anonymised_result.toString()
       },
-      header: {'User-Agent': 'Registry-Interface'},
+      header: {'User-Agent': 'ServiceLedger-Interface'},
       json: true
   }).then(response => {
      if(debug) {
-         console.log("---->response from Registry: ");
+         console.log("---->response from ServiceLedger: ");
          console.log(response);
      }
      examples['application/json'].message = response.message; 

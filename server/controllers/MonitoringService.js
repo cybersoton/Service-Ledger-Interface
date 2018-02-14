@@ -6,8 +6,11 @@ var assert = require("assert");
 var registry_ip = config.get("request_parameters.registry.ip");
 var registry_port = config.get("request_parameters.registry.port");
 
+var request_parameters = config.get('request_parameters');
+
+
 // registry url
-var registry_url = "http://" + registry_ip + ":" + registry_port + "/r/";
+var registry_url = "http://" + registry_ip + ":" + registry_port ;
 
 // utils
 var utils = require("../util/utils.js");
@@ -55,7 +58,7 @@ exports.monitoringReadPOST = function(args, res, next) {
   };
 
   var options = {
-    "url": registry_url + "get",
+    "url": registry_url + request_parameters.path.registry_get,
     "method": "POST",
     "headers": headers,
     "json": body_post
@@ -123,7 +126,7 @@ exports.monitoringStorePOST = function(args, res, next) {
   }
 
   var options = {
-    "url": registry_url + "put",
+    "url": registry_url + request_parameters.path.registry_put,
     "method": "POST",
     "headers": headers,
     "json": body_post
