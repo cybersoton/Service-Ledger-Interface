@@ -1272,6 +1272,17 @@ definitions:
     description: "HTTP response containing the list of policies for the service."
   key-get-body:
     type: "object"
+    required:
+    - "keyType"
+    properties:
+      keyType:
+        type: "string"
+        description: "category of key to retrieve"
+        enum:
+        - "SERVICE"
+        - "MEMBER"
+        - "VM"
+        - "TENANT"
     description: "HTTP response containing the list of keys for a category"
   key-response:
     type: "object"
