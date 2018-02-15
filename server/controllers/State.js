@@ -4,6 +4,10 @@ var url = require('url');
 
 var State = require('./StateService');
 
+module.exports.stateGetKeysPOST = function stateGetKeysPOST (req, res, next) {
+  State.stateGetKeysPOST(req.swagger.params, res, next);
+};
+
 module.exports.stateMember_readPOST = function stateMember_readPOST (req, res, next) {
   State.stateMember_readPOST(req.swagger.params, res, next);
 };

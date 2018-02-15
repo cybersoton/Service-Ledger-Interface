@@ -9,6 +9,28 @@ var utils = require('../util/utils.js');
 
 var debug = true;
 
+exports.stateGetKeysPOST = function(args, res, next) {
+  /**
+   * Get all the key of a category 
+   *
+   * body Key-get-body Body in JSON
+   * returns key-response
+   **/
+  var examples = {};
+  examples['application/json'] = {
+  "list" : [ {
+    "keyId" : "aeiou"
+  } ]
+};
+  if (Object.keys(examples).length > 0) {
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+  } else {
+    res.end();
+  }
+}
+
+
 exports.stateMember_readPOST = function(args, res, next) {
   /**
    * Storing federated services 

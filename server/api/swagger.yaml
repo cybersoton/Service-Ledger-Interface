@@ -406,6 +406,32 @@ paths:
           description: "The operation is not allowed (unauthorised access, the token\
             \ is invalid, etc.)."
       x-swagger-router-controller: "Monitoring"
+  /state/getKeys:
+    post:
+      tags:
+      - "state"
+      description: "Get all the key of a category\n"
+      operationId: "stateGetKeysPOST"
+      consumes:
+      - "application/jason"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/key-get-body"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/key-response"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.)."
+      x-swagger-router-controller: "State"
   /state/service-store:
     post:
       tags:
@@ -1244,6 +1270,19 @@ definitions:
         items:
           $ref: "#/definitions/monitoringresponse_list"
     description: "HTTP response containing the list of policies for the service."
+  key-get-body:
+    type: "object"
+    description: "HTTP response containing the list of keys for a category"
+  key-response:
+    type: "object"
+    required:
+    - "list"
+    properties:
+      list:
+        type: "array"
+        items:
+          $ref: "#/definitions/keyresponse_list"
+    description: "HTTP response containing the list of keys for a category"
   state-service-store-body:
     type: "object"
     required:
@@ -1661,6 +1700,13 @@ definitions:
       data:
         type: "string"
         description: "Base64 encoded XACML request/response."
+  keyresponse_list:
+    required:
+    - "keyId"
+    properties:
+      keyId:
+        type: "string"
+        description: "Specifies the key id."
   statetenantrequestbody_cloudMemberIDs:
     required:
     - "memberId"
