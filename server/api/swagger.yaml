@@ -413,7 +413,7 @@ paths:
       description: "Get all the key of a category\n"
       operationId: "stateGetKeysPOST"
       consumes:
-      - "application/jason"
+      - "application/json"
       parameters:
       - in: "body"
         name: "body"

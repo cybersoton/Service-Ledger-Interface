@@ -11,29 +11,76 @@ var debug = true;
 
 exports.stateGetKeysPOST = function(args, res, next) {
   /**
-   * Get all the key of a category 
+   * Get all the key of a category
    *
    * body Key-get-body Body in JSON
    * returns key-response
    **/
   var examples = {};
-  examples['application/json'] = {
+  examples['application/json'] = {};
+	/*
   "list" : [ {
     "keyId" : "aeiou"
   } ]
-};
-  if (Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-    res.end();
-  }
+	};*/
+
+  var options = {
+    "key" : args.body.value.keyType
+  };
+
+  rp({
+      method: 'POST',
+      uri: url.format({
+           protocol: 'http',
+           hostname: request_parameters.registry.ip,
+           port: request_parameters.registry.port,
+           pathname: request_parameters.path.registry_getAllKeys
+      }),
+      body: options,
+      header:{'User-Agent': 'Service-Ledger-Interface'},
+      json: true
+  }).then(response => {
+      if(debug) {
+          if(debug) console.log("---->response from Service-Ledger: ");
+          if(debug) console.log(response);
+      }
+
+      //var value_content = JSON.parse(response.message);
+      //if(debug) console.log(value_content);
+
+      console.log(response.message);
+
+      examples = {
+        "list" : [response.message]
+      };
+
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(examples));
+    }).catch(err => {
+      	console.log('ERRROR');
+        if (err.statusCode == 404)
+        {
+            if(debug) console.log("---->Key not found!");
+            examples['application/json'].id = args.body.value.dataId;
+            examples['application/json'].name = "none";
+        } else {
+            if(debug) console.log("---->key not found!");
+            examples['application/json'].id = args.body.value.dataId;
+            examples['application/json'].name = "key not found";
+        }
+        if(Object.keys(examples).length > 0) {
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+        } else {
+            res.end();
+        }
+    });
 }
 
 
 exports.stateMember_readPOST = function(args, res, next) {
   /**
-   * Storing federated services 
+   * Storing federated services
    *
    * body Query-request Body in JSON cotaining the service id
    * returns state-member-request-body
@@ -49,9 +96,9 @@ exports.stateMember_readPOST = function(args, res, next) {
 
   var token = args.body.value.token;
   var reqId = args.body.value.requestorID;
-  if (!utils.reqValidate(reqId,token)) {    
+  if (!utils.reqValidate(reqId,token)) {
         res.writeHead(401);
-        res.end('The authentication token is not valid!'); 
+        res.end('The authentication token is not valid!');
   }
 
   var options = {
@@ -77,7 +124,7 @@ exports.stateMember_readPOST = function(args, res, next) {
 
       var value_content = JSON.parse(response.message);
       if(debug) console.log(value_content);
-     
+
       examples['application/json'].id = args.body.value.dataId;
       examples['application/json'].name = value_content.name;
 
@@ -88,12 +135,12 @@ exports.stateMember_readPOST = function(args, res, next) {
           res.end();
       }
     }).catch(err => {
-        if(err.statusCode == 404) 
+        if(err.statusCode == 404)
         {
             if(debug) console.log("---->Member not found!");
             examples['application/json'].id = args.body.value.dataId;
             examples['application/json'].name = "none";
-        } else { 
+        } else {
             if(debug) console.log("---->error when request!");
             examples['application/json'].id = args.body.value.dataId;
             examples['application/json'].name = "error";
@@ -109,7 +156,7 @@ exports.stateMember_readPOST = function(args, res, next) {
 
 exports.stateMember_storePOST = function(args, res, next) {
   /**
-   * Storing federated services 
+   * Storing federated services
    *
    * body State-member-store-body Body in JSON
    * returns ack-response
@@ -124,13 +171,13 @@ exports.stateMember_storePOST = function(args, res, next) {
 
   var token = args.body.value.token;
   var reqId = args.body.value.requestorID;
-  if (!utils.reqValidate(reqId,token)) {    
+  if (!utils.reqValidate(reqId,token)) {
       res.writeHead(401);
-      res.end('The authentication token is not valid!'); 
+      res.end('The authentication token is not valid!');
   }
 
   var options = {
-    "key": args.body.value.id,
+    "key": 'MEMBER_'+ args.body.value.id,
     "value": JSON.stringify({
               name: args.body.value.name
   })};
@@ -173,7 +220,7 @@ exports.stateMember_storePOST = function(args, res, next) {
 
 exports.stateService_readPOST = function(args, res, next) {
   /**
-   * Storing federated services 
+   * Storing federated services
    *
    * body Query-request Body in JSON cotaining the service id
    * returns state-service-request-body
@@ -189,9 +236,9 @@ exports.stateService_readPOST = function(args, res, next) {
 
   var token = args.body.value.token;
   var reqId = args.body.value.requestorID;
-  if (!utils.reqValidate(reqId,token)) {    
+  if (!utils.reqValidate(reqId,token)) {
         res.writeHead(401);
-        res.end('The authentication token is not valid!'); 
+        res.end('The authentication token is not valid!');
   }
 
   var options = {
@@ -217,7 +264,7 @@ exports.stateService_readPOST = function(args, res, next) {
 
       var value_content = JSON.parse(response.message);
       if(debug) console.log(value_content);
-     
+
       examples['application/json'].serviceID = args.body.value.dataId
       examples['application/json'].tenantID = value_content.tenantID;
       examples['application/json'].name = value_content.name;
@@ -230,14 +277,14 @@ exports.stateService_readPOST = function(args, res, next) {
           res.end();
       }
     }).catch(err => {
-        if(err.statusCode == 404) 
+        if(err.statusCode == 404)
         {
             if(debug) console.log("---->Service not found!");
             examples['application/json'].serviceID = args.body.value.dataId;
             examples['application/json'].tenantID = "none";
             examples['application/json'].name = "none";
             examples['application/json'].protocol = "none";
-        } else { 
+        } else {
             if(debug) console.log("---->error when request!");
             examples['application/json'].serviceID = args.body.value.dataId;
             examples['application/json'].tenantID = "error";
@@ -255,7 +302,7 @@ exports.stateService_readPOST = function(args, res, next) {
 
 exports.stateService_storePOST = function(args, res, next) {
   /**
-   * Storing federated services 
+   * Storing federated services
    *
    * body State-service-store-body Body in JSON
    * returns ack-response
@@ -268,13 +315,13 @@ exports.stateService_storePOST = function(args, res, next) {
 
   var token = args.body.value.token;
   var reqId = args.body.value.requestorID;
-  if (!utils.reqValidate(reqId,token)) {    
+  if (!utils.reqValidate(reqId,token)) {
       res.writeHead(401);
-      res.end('The authentication token is not valid!'); 
+      res.end('The authentication token is not valid!');
   }
 
   var options = {
-    "key": args.body.value.serviceID,
+    "key": 'SERVICE_'+ args.body.value.serviceID,
     "value": JSON.stringify({
               "tenantID" : args.body.value.tenantID,
               "name": args.body.value.name,
@@ -322,7 +369,7 @@ exports.stateService_storePOST = function(args, res, next) {
 
 exports.stateTenant_addMemberPOST = function(args, res, next) {
   /**
-   * Creating a tenant 
+   * Creating a tenant
    *
    * body State-tenant-store-member-body Body in JSON
    * returns ack-response
@@ -335,9 +382,9 @@ exports.stateTenant_addMemberPOST = function(args, res, next) {
 
   var token = args.body.value.token;
   var reqId = args.body.value.requestorID;
-  if (!utils.reqValidate(reqId,token)) {    
+  if (!utils.reqValidate(reqId,token)) {
       res.writeHead(401);
-      res.end('The authentication token is not valid!'); 
+      res.end('The authentication token is not valid!');
   }
 
   var options = {
@@ -363,11 +410,11 @@ exports.stateTenant_addMemberPOST = function(args, res, next) {
 
     var value_content = JSON.parse(response.message);
     if(debug) console.log(value_content);
-   
+
     //add member to the tenant
     //console.log(value_content.cloudMemberIDs);
     value_content.cloudMemberIDs.push({"memberId": args.body.value.cloudMemberID});
-    
+
     //store the new tenant state
     options = {
       "key": args.body.value.id,
@@ -375,7 +422,7 @@ exports.stateTenant_addMemberPOST = function(args, res, next) {
                 name: value_content.name,
                 cloudMemberIDs: value_content.cloudMemberIDs
     })};
-  
+
     rp({
       method: 'POST',
       uri: url.format({
@@ -392,9 +439,9 @@ exports.stateTenant_addMemberPOST = function(args, res, next) {
           console.log("---->response from Service-Ledger: ");
           console.log(response);
       }
-  
+
       examples['application/json'].message = response.message;
-  
+
       if (Object.keys(examples).length > 0) {
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
@@ -403,11 +450,11 @@ exports.stateTenant_addMemberPOST = function(args, res, next) {
       }
     }).catch();
   }).catch(err => {
-      if(err.statusCode == 404) 
+      if(err.statusCode == 404)
       {
           if(debug) console.log("---->Tenant not found!");
           examples['application/json'].message = "Tenant not found";
-      } else { 
+      } else {
           if(debug) console.log("---->error when request!");
           console.log(err);
           examples['application/json'].message = "error when get tenant";
@@ -424,7 +471,7 @@ exports.stateTenant_addMemberPOST = function(args, res, next) {
 
 exports.stateTenant_createPOST = function(args, res, next) {
   /**
-   * Creating a tenant 
+   * Creating a tenant
    *
    * body State-tenant-store-body Body in JSON
    * returns ack-response
@@ -439,13 +486,13 @@ exports.stateTenant_createPOST = function(args, res, next) {
 
   var token = args.body.value.token;
   var reqId = args.body.value.requestorID;
-  if (!utils.reqValidate(reqId,token)) {    
+  if (!utils.reqValidate(reqId,token)) {
       res.writeHead(401);
-      res.end('The authentication token is not valid!'); 
+      res.end('The authentication token is not valid!');
   }
 
   var options = {
-    "key": args.body.value.id,
+    "key": 'TENANT_'+ args.body.value.id,
     "value": JSON.stringify({
               name: args.body.value.name,
               cloudMemberIDs: []
@@ -490,7 +537,7 @@ exports.stateTenant_createPOST = function(args, res, next) {
 
 exports.stateTenant_readPOST = function(args, res, next) {
   /**
-   * Storing federated services 
+   * Storing federated services
    *
    * body Query-request Body in JSON cotaining the service id
    * returns state-tenant-request-body
@@ -507,9 +554,9 @@ exports.stateTenant_readPOST = function(args, res, next) {
 
   var token = args.body.value.token;
   var reqId = args.body.value.requestorID;
-  if (!utils.reqValidate(reqId,token)) {    
+  if (!utils.reqValidate(reqId,token)) {
         res.writeHead(401);
-        res.end('The authentication token is not valid!'); 
+        res.end('The authentication token is not valid!');
   }
 
   var options = {
@@ -535,7 +582,7 @@ exports.stateTenant_readPOST = function(args, res, next) {
 
       var value_content = JSON.parse(response.message);
       if(debug) console.log(value_content);
-     
+
       examples['application/json'].id = args.body.value.dataId
       examples['application/json'].name = value_content.name;
       examples['application/json'].cloudMemberIDs = value_content.cloudMemberIDs;
@@ -547,13 +594,13 @@ exports.stateTenant_readPOST = function(args, res, next) {
           res.end();
       }
     }).catch(err => {
-        if(err.statusCode == 404) 
+        if(err.statusCode == 404)
         {
             if(debug) console.log("---->Tenant not found!");
             examples['application/json'].id = args.body.value.dataId;
             examples['application/json'].name = "none";
             examples['application/json'].cloudMemberIDs = [{"memberId" : "none"}];
-        } else { 
+        } else {
             if(debug) console.log("---->error when request!");
             examples['application/json'].id = args.body.value.dataId;
             examples['application/json'].name = "error";
@@ -571,7 +618,7 @@ exports.stateTenant_readPOST = function(args, res, next) {
 
 exports.stateVm_readPOST = function(args, res, next) {
   /**
-   * Storing federated services 
+   * Storing federated services
    *
    * body Query-request Body in JSON cotaining the vm id
    * returns state-vm-request-body
@@ -588,9 +635,9 @@ exports.stateVm_readPOST = function(args, res, next) {
 
   var token = args.body.value.token;
   var reqId = args.body.value.requestorID;
-  if (!utils.reqValidate(reqId,token)) {    
+  if (!utils.reqValidate(reqId,token)) {
         res.writeHead(401);
-        res.end('The authentication token is not valid!'); 
+        res.end('The authentication token is not valid!');
   }
 
   var options = {
@@ -616,7 +663,7 @@ exports.stateVm_readPOST = function(args, res, next) {
 
       var value_content = JSON.parse(response.message);
       if(debug) console.log(value_content);
-     
+
       examples['application/json'].id = args.body.value.dataId;
       examples['application/json'].name = value_content.name;
       examples['application/json'].os = value_content.os;
@@ -630,7 +677,7 @@ exports.stateVm_readPOST = function(args, res, next) {
           res.end();
       }
     }).catch(err => {
-        if(err.statusCode == 404) 
+        if(err.statusCode == 404)
         {
             if(debug) console.log("---->VM not found!");
             examples['application/json'].id = args.body.value.dataId;
@@ -638,7 +685,7 @@ exports.stateVm_readPOST = function(args, res, next) {
             examples['application/json'].os = "none";
             examples['application/json'].disk = "none";
             examples['application/json'].cloudMemberID = "none";
-        } else { 
+        } else {
             if(debug) console.log("---->error when request!");
             examples['application/json'].id = args.body.value.dataId;
             examples['application/json'].name = "error";
@@ -658,7 +705,7 @@ exports.stateVm_readPOST = function(args, res, next) {
 
 exports.stateVm_storePOST = function(args, res, next) {
   /**
-   * Storing federated services 
+   * Storing federated services
    *
    * body State-vm-store-body Body in JSON
    * returns ack-response
@@ -673,13 +720,13 @@ exports.stateVm_storePOST = function(args, res, next) {
 
   var token = args.body.value.token;
   var reqId = args.body.value.requestorID;
-  if (!utils.reqValidate(reqId,token)) {    
+  if (!utils.reqValidate(reqId,token)) {
       res.writeHead(401);
-      res.end('The authentication token is not valid!'); 
+      res.end('The authentication token is not valid!');
   }
 
   var options = {
-    "key": args.body.value.id,
+    "key": 'VM_'+ args.body.value.id,
     "value": JSON.stringify({
               name: args.body.value.name,
               os: args.body.value.os,
@@ -722,4 +769,3 @@ exports.stateVm_storePOST = function(args, res, next) {
     }
   });
 }
-
