@@ -11,13 +11,13 @@ var debug = true;
 
 exports.proposalCountVotesPOST = function(args, res, next) {
   /**
-   * Request a votes counting to validate a stored proposal  
+   * Request a votes counting to validate a stored proposal
    *
    * body Countvotes-proposal-body Body in JSON
    * returns countvotes-proposal-response
    **/
   var examples = {};
-  examples['application/json'] = {  
+  examples['application/json'] = {
     "proposalID": "aeiou",
     "memberID": "aeiou",
     "vote": "aeiou"
@@ -66,7 +66,7 @@ exports.proposalCountVotesPOST = function(args, res, next) {
         res.end();
     }
   }).catch(err => {
-    if(err.statusCode == 404) 
+    if(err.statusCode == 404)
     {
       if(debug) console.log("---->Proposal not found!");
       examples['application/json'].proposalID = args.body.value.proposalID;
@@ -75,7 +75,7 @@ exports.proposalCountVotesPOST = function(args, res, next) {
       examples['application/json'].proposalType = "none";
       examples['application/json'].proposalQuorum = "none";
       examples['application/json'].proposalDescription = "none";
-    } else { 
+    } else {
       if(debug) console.log("---->error when request to get the proposal!");
       examples['application/json'].proposalID = args.body.value.proposalID;
       examples['application/json'].proposalStatus = "error";
@@ -95,7 +95,7 @@ exports.proposalCountVotesPOST = function(args, res, next) {
 
 exports.proposalGetProposalPOST = function(args, res, next) {
   /**
-   * getting a proposal 
+   * getting a proposal
    *
    * body Get-proposal-body Body in JSON
    * returns get-proposal-response
@@ -140,7 +140,7 @@ exports.proposalGetProposalPOST = function(args, res, next) {
 
     var value_content = JSON.parse(response.message);
     if(debug) console.log(value_content);
-  
+
     // TODO: verificare se la lettura del LOG contenga i dati necessari
     examples['application/json'].proposalID = args.body.value.proposalID;
     examples['application/json'].proposalStatus = value_content.proposalStatus;
@@ -157,7 +157,7 @@ exports.proposalGetProposalPOST = function(args, res, next) {
          res.end();
     }
   }).catch(err => {
-    if(err.statusCode == 404) 
+    if(err.statusCode == 404)
     {
       if(debug) console.log("---->Proposal not found!");
       examples['application/json'].proposalID = args.body.value.proposalID;
@@ -166,7 +166,7 @@ exports.proposalGetProposalPOST = function(args, res, next) {
       examples['application/json'].proposalType = "none";
       examples['application/json'].proposalQuorum = "none";
       examples['application/json'].proposalDescription = "none";
-    } else { 
+    } else {
       if(debug) console.log("---->error when request to get the proposal!");
       examples['application/json'].proposalID = args.body.value.proposalID;
       examples['application/json'].proposalStatus = "error";
@@ -186,21 +186,21 @@ exports.proposalGetProposalPOST = function(args, res, next) {
 
 exports.proposalSubmitProposalPOST = function(args, res, next) {
   /**
-   * Submitting a proposal  
+   * Submitting a proposal
    *
    * body Submit-proposal-body Body in JSON
    * returns ack-response
    **/
   var examples = {};
-  examples['application/json'] = {
+  /*examples['applicati/on/json'] = {
   "message" : "aeiou"
-  };
-  if (Object.keys(examples).length > 0) {
+  };*/
+  /*if (Object.keys(examples).length > 0) {
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+    //res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
   } else {
     res.end();
-  }
+  }*/
   // input parameters for the request passed in 'args'
   var options = {
     "requestorID" : args.body.value.requestorID,
@@ -212,15 +212,26 @@ exports.proposalSubmitProposalPOST = function(args, res, next) {
     "proposalDescription" : args.body.value.proposalDescription
   };
 
+  console.log(options)
+
   rp({
     method: 'POST',
     uri: url.format({
         protocol: 'http',
         hostname: request_parameters.registry.ip,
         port: request_parameters.registry.port,
-        pathname: request_parameters.path.registry_put
+        pathname: request_parameters.path.registry_invoke
     }),
-    body: options,
+    body:
+    {
+      "channel": "string",
+      "peer": "string",
+      "chaincodeName": "string",
+      "fcn": "string",
+      "args": [
+        "string"
+      ]
+    },
     header:{'User-Agent': 'Service-Ledger-Interface'},
     json: true
   }).then(response => {
@@ -238,7 +249,7 @@ exports.proposalSubmitProposalPOST = function(args, res, next) {
       res.end();
     }
   }).catch(err => {
-    if(debug) console.log(err);
+    //if(debug) console.log(err);
     if (Object.keys(examples).length > 0) {
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
@@ -251,7 +262,7 @@ exports.proposalSubmitProposalPOST = function(args, res, next) {
 
 exports.proposalVoteProposalPOST = function(args, res, next) {
   /**
-   * vote for a submitted a proposal  
+   * vote for a submitted a proposal
    *
    * body Vote-proposal-body Body in JSON
    * returns ack-response
@@ -304,10 +315,10 @@ exports.proposalVoteProposalPOST = function(args, res, next) {
           res.end();
     }
   }).catch(err => {
-    if(err.statusCode == 404) 
+    if(err.statusCode == 404)
     {
       if(debug) console.log("---->Proposal to be voted not found!");
-    } else { 
+    } else {
       if(debug) console.log("---->error when request to get the proposal to be voted!");
     }
     if(Object.keys(examples).length > 0) {
@@ -318,4 +329,3 @@ exports.proposalVoteProposalPOST = function(args, res, next) {
     }
   });
 }
-
