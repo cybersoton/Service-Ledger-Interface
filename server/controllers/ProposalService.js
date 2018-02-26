@@ -32,9 +32,7 @@ exports.proposalCountVotesPOST = function(args, res, next) {
   var options = [
     args.body.value.proposalID
   ];
-  
-  console.log(options)
-  
+    
   rp({
     method: 'POST',
     uri: url.format({
@@ -130,7 +128,6 @@ exports.proposalGetProposalPOST = function(args, res, next) {
     args.body.value.proposalID
   ];
 
-  console.log(options)
 
   rp({
     method: 'POST',
@@ -210,15 +207,7 @@ exports.proposalSubmitProposalPOST = function(args, res, next) {
    * returns ack-response
    **/
   var examples = {};
-  /*examples['applicati/on/json'] = {
-  "message" : "aeiou"
-  };*/
-  /*if (Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    //res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-    res.end();
-  }*/
+  
   // input parameters for the request passed in 'args'
   var options = [
     args.body.value.requestorID,
@@ -229,17 +218,6 @@ exports.proposalSubmitProposalPOST = function(args, res, next) {
     args.body.value.proposalID,
     args.body.value.proposalDescription
   ];
-
-  // bisogna parsare correttamente i parametri che arivano a proposalService.js non son come li pensavo
-    // "requestorID" : args.body.value.args.requestorID,
-    // "proposalStatus" : args.body.value.args.proposalStatus,
-    // "votersNumber" : args.body.value.args.votersNumber,
-    // "proposalType" : args.body.value.args.proposalType,
-    // "proposalQuorum" : args.body.value.args.proposalQuorum,
-    // "proposalID" : args.body.value.args.proposalID,
-    // "proposalDescription" : args.body.value.args.proposalDescription
-
-  console.log(options)
 
   rp({
     method: 'POST',
@@ -293,15 +271,6 @@ exports.proposalVoteProposalPOST = function(args, res, next) {
    * returns ack-response
    **/
   var examples = {};
-  examples['application/json'] = {
-  "message" : "aeiou"
-  };
-  if (Object.keys(examples).length > 0) {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-  } else {
-    res.end();
-  }
 
   var options = [
     args.body.value.requestorID,
@@ -309,7 +278,7 @@ exports.proposalVoteProposalPOST = function(args, res, next) {
     args.body.value.vote
   ];
 
-  console.log(options)
+	console.log(options);
 
   rp({
     method: 'POST',
