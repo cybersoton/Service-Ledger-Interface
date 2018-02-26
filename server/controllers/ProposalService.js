@@ -39,9 +39,18 @@ exports.proposalCountVotesPOST = function(args, res, next) {
         protocol: 'http',
         hostname: request_parameters.registry.ip,
         port: request_parameters.registry.port,
-        pathname: request_parameters.path.registry_get
+        pathname: request_parameters.path.registry_invoke
     }),
-    body: options,
+    body: 
+    {
+      "channel": "sunfish-channel",
+      "peer": "string",
+      "chaincodeName": "countVote",
+      "fcn": "string",
+      "args": {
+        options
+      }
+    },
     header:{'User-Agent': 'Service-Ledger-Interface'},
     json: true
   }).then(response => {
@@ -127,9 +136,18 @@ exports.proposalGetProposalPOST = function(args, res, next) {
         protocol: 'http',
         hostname: request_parameters.registry.ip,
         port: request_parameters.registry.port,
-        pathname: request_parameters.path.registry_get
+        pathname: request_parameters.path.registry_invoke
     }),
-    body: options,
+    body: 
+    {
+      "channel": "sunfish-channel",
+      "peer": "string",
+      "chaincodeName": "getProposal",
+      "fcn": "string",
+      "args": {
+        options
+      }
+    },
     header:{'User-Agent': 'Service-Ledger-Interface'},
     json: true
   }).then(response => {
@@ -212,6 +230,15 @@ exports.proposalSubmitProposalPOST = function(args, res, next) {
     "proposalDescription" : args.body.value.proposalDescription
   };
 
+  // bisogna parsare correttamente i parametri che arivano a proposalService.js non son come li pensavo
+    // "requestorID" : args.body.value.args.requestorID,
+    // "proposalStatus" : args.body.value.args.proposalStatus,
+    // "votersNumber" : args.body.value.args.votersNumber,
+    // "proposalType" : args.body.value.args.proposalType,
+    // "proposalQuorum" : args.body.value.args.proposalQuorum,
+    // "proposalID" : args.body.value.args.proposalID,
+    // "proposalDescription" : args.body.value.args.proposalDescription
+
   console.log(options)
 
   rp({
@@ -224,13 +251,13 @@ exports.proposalSubmitProposalPOST = function(args, res, next) {
     }),
     body:
     {
-      "channel": "string",
+      "channel": "sunfish-channel",
       "peer": "string",
-      "chaincodeName": "string",
+      "chaincodeName": "submitProposal",
       "fcn": "string",
-      "args": [
-        "string"
-      ]
+      "args": {
+        options
+      }
     },
     header:{'User-Agent': 'Service-Ledger-Interface'},
     json: true
@@ -290,9 +317,18 @@ exports.proposalVoteProposalPOST = function(args, res, next) {
         protocol: 'http',
         hostname: request_parameters.registry.ip,
         port: request_parameters.registry.port,
-        pathname: request_parameters.path.registry_get
+        pathname: request_parameters.path.registry_invoke
     }),
-    body: options,
+    body: 
+    {
+      "channel": "sunfish-channel",
+      "peer": "string",
+      "chaincodeName": "vote",
+      "fcn": "string",
+      "args": {
+        options
+      }
+    },
     header:{'User-Agent': 'Service-Ledger-Interface'},
     json: true
   }).then(response => {
