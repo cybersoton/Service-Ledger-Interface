@@ -126,9 +126,6 @@ exports.proposalGetProposalPOST = function(args, res, next) {
     res.end();
   }
 
-  var options = {
-    "proposalID": args.body.value.proposalID
-  };
 
   rp({
     method: 'POST',
@@ -144,9 +141,9 @@ exports.proposalGetProposalPOST = function(args, res, next) {
       "peer": "string",
       "chaincodeName": "getProposal",
       "fcn": "string",
-      "args": {
-        options
-      }
+      "args": 
+				[args.body.value.proposalID]
+			
     },
     header:{'User-Agent': 'Service-Ledger-Interface'},
     json: true
@@ -255,9 +252,9 @@ exports.proposalSubmitProposalPOST = function(args, res, next) {
       "peer": "string",
       "chaincodeName": "submitProposal",
       "fcn": "string",
-      "args": {
-        options
-      }
+      "args": 
+				[args.body.value.requestorID,args.body.value.requestorID ]
+			
     },
     header:{'User-Agent': 'Service-Ledger-Interface'},
     json: true
