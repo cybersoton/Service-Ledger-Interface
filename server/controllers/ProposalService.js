@@ -29,10 +29,12 @@ exports.proposalCountVotesPOST = function(args, res, next) {
     res.end();
   }
 
-  var options = {
-    "proposalID": args.body.value.proposalID
-  };
-
+  var options = [
+    args.body.value.proposalID
+  ];
+  
+  console.log(options)
+  
   rp({
     method: 'POST',
     uri: url.format({
@@ -47,9 +49,7 @@ exports.proposalCountVotesPOST = function(args, res, next) {
       "peer": "string",
       "chaincodeName": "countVote",
       "fcn": "string",
-      "args": {
-        options
-      }
+      "args": options
     },
     header:{'User-Agent': 'Service-Ledger-Interface'},
     json: true
@@ -126,6 +126,11 @@ exports.proposalGetProposalPOST = function(args, res, next) {
     res.end();
   }
 
+  var options = [
+    args.body.value.proposalID
+  ];
+
+  console.log(options)
 
   rp({
     method: 'POST',
@@ -141,9 +146,7 @@ exports.proposalGetProposalPOST = function(args, res, next) {
       "peer": "string",
       "chaincodeName": "getProposal",
       "fcn": "string",
-      "args": 
-				[args.body.value.proposalID]
-			
+      "args": options
     },
     header:{'User-Agent': 'Service-Ledger-Interface'},
     json: true
@@ -217,15 +220,15 @@ exports.proposalSubmitProposalPOST = function(args, res, next) {
     res.end();
   }*/
   // input parameters for the request passed in 'args'
-  var options = {
-    "requestorID" : args.body.value.requestorID,
-    "proposalStatus" : args.body.value.proposalStatus,
-    "votersNumber" : args.body.value.votersNumber,
-    "proposalType" : args.body.value.proposalType,
-    "proposalQuorum" : args.body.value.proposalQuorum,
-    "proposalID" : args.body.value.proposalID,
-    "proposalDescription" : args.body.value.proposalDescription
-  };
+  var options = [
+    args.body.value.requestorID,
+    args.body.value.proposalStatus,
+    args.body.value.votersNumber,
+    args.body.value.proposalType,
+    args.body.value.proposalQuorum,
+    args.body.value.proposalID,
+    args.body.value.proposalDescription
+  ];
 
   // bisogna parsare correttamente i parametri che arivano a proposalService.js non son come li pensavo
     // "requestorID" : args.body.value.args.requestorID,
@@ -252,9 +255,7 @@ exports.proposalSubmitProposalPOST = function(args, res, next) {
       "peer": "string",
       "chaincodeName": "submitProposal",
       "fcn": "string",
-      "args": 
-				[args.body.value.requestorID,args.body.value.requestorID ]
-			
+      "args": options
     },
     header:{'User-Agent': 'Service-Ledger-Interface'},
     json: true
@@ -302,11 +303,13 @@ exports.proposalVoteProposalPOST = function(args, res, next) {
     res.end();
   }
 
-  var options = {
-    "memberID" : args.body.value.memeberID,
-    "proposalID" : args.body.value.proposalID,
-    "vote" : args.body.value.vote
-  };
+  var options = [
+    args.body.value.requestorID,
+    args.body.value.proposalID,
+    args.body.value.vote
+  ];
+
+  console.log(options)
 
   rp({
     method: 'POST',
@@ -322,9 +325,7 @@ exports.proposalVoteProposalPOST = function(args, res, next) {
       "peer": "string",
       "chaincodeName": "vote",
       "fcn": "string",
-      "args": {
-        options
-      }
+      "args": options
     },
     header:{'User-Agent': 'Service-Ledger-Interface'},
     json: true

@@ -1545,11 +1545,11 @@ definitions:
   vote-proposal-body:
     type: "object"
     required:
-    - "memberID"
+    - "requestorID"
     - "proposalID"
     - "vote"
     properties:
-      memberID:
+      requestorID:
         type: "string"
         description: "Identifier of the voter member."
       proposalID:
