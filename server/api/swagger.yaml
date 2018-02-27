@@ -432,6 +432,32 @@ paths:
           description: "The operation is not allowed (unauthorised access, the token\
             \ is invalid, etc.)."
       x-swagger-router-controller: "State"
+  /state/deleteKey:
+    post:
+      tags:
+      - "state"
+      description: "Remove the pair identified by the key\n"
+      operationId: "stateDeleteKeyPOST"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Body in JSON"
+        required: true
+        schema:
+          $ref: "#/definitions/query-request"
+      responses:
+        200:
+          description: "The response body for a successful response."
+          schema:
+            $ref: "#/definitions/ack-response"
+        400:
+          description: "Invalid request, required parameter(s) missing."
+        401:
+          description: "The operation is not allowed (unauthorised access, the token\
+            \ is invalid, etc.).         "
+      x-swagger-router-controller: "State"
   /state/service-store:
     post:
       tags:
@@ -808,7 +834,6 @@ definitions:
   policy-ofservice-body:
     type: "object"
     required:
-    - "policyType"
     - "requestorID"
     - "serviceID"
     - "token"
@@ -824,9 +849,6 @@ definitions:
         type: "string"
         description: "Specifies the service identifier to be used to retrieve the\
           \ set of policies belonging to that identifier."
-      policyType:
-        type: "string"
-        description: "The type of the policy."
     description: "HTTP body defining the read operation for the /read endpoint"
   policy-ofservice-response:
     type: "object"
@@ -1283,6 +1305,8 @@ definitions:
         - "MEMBER"
         - "VM"
         - "TENANT"
+        - "POLICY_AC"
+        - "POLICY_SLA"
     description: "HTTP response containing the list of keys for a category"
   key-response:
     type: "object"
@@ -1545,11 +1569,11 @@ definitions:
   vote-proposal-body:
     type: "object"
     required:
-    - "requestorID"
+    - "memberID"
     - "proposalID"
     - "vote"
     properties:
-      requestorID:
+      memberID:
         type: "string"
         description: "Identifier of the voter member."
       proposalID:
@@ -1681,6 +1705,7 @@ definitions:
     required:
     - "policy"
     - "policyId"
+    - "policyType"
     properties:
       policyId:
         type: "string"
@@ -1688,6 +1713,9 @@ definitions:
       policy:
         type: "string"
         description: "BASE64-enocded data of the policy."
+      policyType:
+        type: "string"
+        description: "The type of the policy."
   monitoringresponse_list:
     required:
     - "data"

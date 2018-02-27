@@ -9,6 +9,59 @@ var utils = require('../util/utils.js');
 
 var debug = true;
 
+
+exports.stateDeleteKeyPOST = function(args, res, next) {
+  /**
+   * Remove the pair identified by the key
+   *
+   * body Query-request Body in JSON
+   * returns ack-response
+    **/
+  var token = args.body.value.token;
+  var reqId = args.body.value.requestorID;
+  if (!utils.reqValidate(reqId,token)) {
+      res.writeHead(401);
+      res.end('The authentication token is not valid!');
+  }
+
+  var examples = {};
+
+  var options = {
+        "key": args.body.value.dataId
+  };
+
+  rp({
+      method: 'POST',
+      uri: url.format({
+           protocol: 'http',
+           hostname: request_parameters.registry.ip,
+           port: request_parameters.registry.port,
+           pathname: request_parameters.path.registry_delete
+      }),
+      body: options,
+      header: {'User-Agent': 'Service-Ledger-Interface'},
+      json: true
+  }).then(response => {
+      if(debug) {
+          console.log("---->response from Service-Ledger: ");
+          console.log(response);
+      }
+      examples['application/json'] = response;
+      if(Object.keys(examples).length > 0) {
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
+      } else {
+        res.statusCode = 400;
+        res.end(JSON.stringify({error: "unexpected error in the delete operation"}));
+      }
+  }).catch(err => {
+    console.log(err)
+    res.statusCode = 400;
+    res.end(JSON.stringify({error: "unexpected error in the delete operation"}));
+    }
+  );
+}
+
 exports.stateGetKeysPOST = function(args, res, next) {
   /**
    * Get all the key of a category

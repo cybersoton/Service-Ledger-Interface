@@ -28,3 +28,4 @@ controllers/AnonymisationService.js
 controllers/AlertService.js
 controllers/MonitoringService.js
 controllers/StateService.js
+controllers/ProposalService.js

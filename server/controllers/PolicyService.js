@@ -1,5 +1,6 @@
 'use strict';
 
+var fs = require("fs");
 var rp = require('request-promise');
 var config = require('config');
 var url = require('url');
@@ -106,8 +107,13 @@ exports.policyDeletePOST = function(args, res, next) {
       if(err.statusCode == 400)
       {
           console.log("---->Policy not found!");
+          console.log(err)
+          res.statusCode = 400;
+          res.end(JSON.stringify({error: "unexpectedly policy not found"}));
       } else {
-          console.log("---->error when request!");
+        console.log(err)
+        res.statusCode = 400;
+        res.end(JSON.stringify({error: "unexpected error in the delete operation"}));
       }
   });
 
@@ -133,9 +139,14 @@ exports.policyDeletePOST = function(args, res, next) {
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
       } else {
-          res.end();
+        res.statusCode = 400;
+        res.end(JSON.stringify({error: "unexpected error in the delete operation"}));
       }
-  }).catch(err => console.log(err));
+  }).catch(err => {
+    console.log(err);
+    res.statusCode = 400;
+    res.end(JSON.stringify({error: "unexpected error in the delete operation"}));
+  });
 
 
 }
@@ -156,8 +167,8 @@ exports.policyPolServicePOST = function(args, res, next) {
       res.end('The authentication token is not valid!');
   }
 
-  var examples = {};
-  examples['application/json'] = {
+  var listToReturn = {};
+  listToReturn['application/json'] = {
   "list" : []
   };
 
@@ -184,32 +195,60 @@ exports.policyPolServicePOST = function(args, res, next) {
 
       // check policy type here
       var policy_arr = response.message.split(";");
+      var itemsProcessed = 0;
+      policy_arr.forEach(function(value){  
+        var each_policy = value.split(",");
+        console.log("Searching info for policy "+ each_policy[0]);
 
-      policy_arr.forEach(function(value){
-          var each_policy = value.split(",");
-          examples['application/json'].list.push({"policyId": each_policy[0],
-                                              "policy": each_policy[1]});
+        rp({
+            method: 'POST',
+            uri: url.format({
+                 protocol: 'http',
+                 hostname: request_parameters.registry.ip,
+                 port: request_parameters.registry.port,
+                 pathname: request_parameters.path.registry_get
+            }),
+            body: {"key" : each_policy[0]},
+            header:{'User-Agent': 'Service-Ledger-Interface'},
+            json: true
+        }).then(response => {
+            if(debug) {
+                console.log("---->response GET from Service-Ledger: ");
+                console.log(response);
+            }
 
+            console.log("Retrieved info on the policy: " + response.message);
+
+            var policy_content = JSON.parse(response.message);
+
+            listToReturn['application/json'].list.push(
+              {"policyId": each_policy[0],
+               "policy": policy_content.policy,
+               "policyType": policy_content.policyType
+              });
+
+            console.log(JSON.stringify(listToReturn));
+            itemsProcessed = itemsProcessed + 1; 
+            if(itemsProcessed === policy_arr.length) {
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify(listToReturn[Object.keys(listToReturn)[0]] || {}, null, 2));
+            }
+        }).catch(err => {
+            console.log(err)
+            res.statusCode = 400;
+            res.end(JSON.stringify({error: "unexpectedly policy not found"}));
+        });
       });
-
-      if(Object.keys(examples).length > 0) {
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-      } else {
-          res.end();
-      }
   }).catch(err => {
-      if(err.statusCode == 400)
-      {
+      if(err.statusCode == 400){
           console.log("---->Policy not found!");
+          console.log(err)
+          res.statusCode = 400;
+          res.end(JSON.stringify({error: "unexpectedly policy not found"}));
       } else {
-          console.log("---->error when request!");
-      }
-      if(Object.keys(examples).length > 0) {
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-      } else {
-          res.end();
+        console.log(err)
+        res.statusCode = 400;
+        res.end(JSON.stringify({error: "unexpected error in the search operation"}));
       }
   });
 }
