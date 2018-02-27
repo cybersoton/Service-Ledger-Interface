@@ -18,7 +18,7 @@ var request = require("request");
 
 exports.alertReadPOST = function(args, res, next) {
   /**
-   * This endpoint is used to retrieve the stored alert using the index. The body contains the alert id received by the store api 
+   * This endpoint is used to retrieve the stored alert using the index. The body contains the alert id received by the store api
    *
    * body Query-request Body in JSON
    * returns ack-response
@@ -69,7 +69,7 @@ exports.alertReadPOST = function(args, res, next) {
 
 exports.alertStorePOST = function(args, res, next) {
   /**
-   * This endpoint is used to store alerts. 
+   * This endpoint is used to store alerts.
    *
    * body Alert-store Body in JSON
    * returns ack-response
@@ -81,11 +81,11 @@ exports.alertStorePOST = function(args, res, next) {
     res.end("The authentication token is not valid!");
   }
 
-  var alertId = args.body.value.alertID;
+  var alertId = "ALERT_" + args.body.value.alertID;
   var alertType = args.body.value.alertType;
   var alertSource = args.body.value.alertSource;
   var alertBody = args.body.value.alertBody;
-  
+
   if(
     alertId == undefined ||
     reqId == undefined ||
@@ -119,7 +119,7 @@ exports.alertStorePOST = function(args, res, next) {
     "json": body_post
   }
 
-  // start the request 
+  // start the request
   request(options, function(error, response, body) {
     if(error) {
       res.writeHead(400, {"Content-Type": "application/json"});
@@ -131,4 +131,3 @@ exports.alertStorePOST = function(args, res, next) {
     }
   });
 }
-

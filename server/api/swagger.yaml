@@ -1311,6 +1311,7 @@ definitions:
         - "TENANT"
         - "POLICY_AC"
         - "POLICY_SLA"
+        - "ALERT"
     description: "HTTP response containing the list of keys for a category"
   key-response:
     type: "object"
