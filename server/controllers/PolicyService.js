@@ -1,6 +1,5 @@
 'use strict';
 
-var fs = require("fs");
 var rp = require('request-promise');
 var config = require('config');
 var url = require('url');
@@ -228,7 +227,7 @@ exports.policyPolServicePOST = function(args, res, next) {
               });
 
             console.log(JSON.stringify(listToReturn));
-            itemsProcessed = itemsProcessed + 1; 
+            itemsProcessed = itemsProcessed + 1;
             if(itemsProcessed === policy_arr.length) {
               res.setHeader('Content-Type', 'application/json');
               res.end(JSON.stringify(listToReturn[Object.keys(listToReturn)[0]] || {}, null, 2));
