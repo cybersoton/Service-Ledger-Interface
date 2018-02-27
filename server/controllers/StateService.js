@@ -284,7 +284,8 @@ exports.stateService_readPOST = function(args, res, next) {
   "protocol" : "undefined",
   "tenantID" : "undefined",
   "name" : "undefined",
-  "serviceID" : "undefined"
+  "serviceID" : "undefined",
+  "url": "undefined"
   };
 
   var token = args.body.value.token;
@@ -322,6 +323,7 @@ exports.stateService_readPOST = function(args, res, next) {
       examples['application/json'].tenantID = value_content.tenantID;
       examples['application/json'].name = value_content.name;
       examples['application/json'].protocol = value_content.protocol;
+      examples['application/json'].url = value_content.url;
 
      if(Object.keys(examples).length > 0) {
           res.setHeader('Content-Type', 'application/json');
@@ -378,7 +380,8 @@ exports.stateService_storePOST = function(args, res, next) {
     "value": JSON.stringify({
               "tenantID" : args.body.value.tenantID,
               "name": args.body.value.name,
-              "protocol": args.body.value.protocol
+              "protocol": args.body.value.protocol,
+              "url": args.body.value.url
              })
   };
 
@@ -548,7 +551,8 @@ exports.stateTenant_createPOST = function(args, res, next) {
     "key": 'TENANT_'+ args.body.value.id,
     "value": JSON.stringify({
               name: args.body.value.name,
-              cloudMemberIDs: []
+              cloudMemberIDs: [],
+              url: args.body.value.url
   })};
 
   rp({
@@ -602,7 +606,8 @@ exports.stateTenant_readPOST = function(args, res, next) {
         "memberId" : "undefined"
     }],
     "name" : "undefined",
-    "id" : "undefined"
+    "id" : "undefined",
+    "url" : "undefined",
   };
 
   var token = args.body.value.token;
@@ -639,6 +644,8 @@ exports.stateTenant_readPOST = function(args, res, next) {
       examples['application/json'].id = args.body.value.dataId
       examples['application/json'].name = value_content.name;
       examples['application/json'].cloudMemberIDs = value_content.cloudMemberIDs;
+      examples['application/json'].url = value_content.url;
+
 
      if(Object.keys(examples).length > 0) {
           res.setHeader('Content-Type', 'application/json');

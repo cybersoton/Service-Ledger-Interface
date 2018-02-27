@@ -1331,6 +1331,7 @@ definitions:
     - "serviceID"
     - "tenantID"
     - "token"
+    - "url"
     properties:
       requestorID:
         type: "string"
@@ -1351,6 +1352,9 @@ definitions:
       protocol:
         type: "string"
         description: "protocol used by the service."
+      url:
+        type: "string"
+        description: "url used by the service."
     description: "HTTP body defining the service store operation"
   state-service-request-body:
     type: "object"
@@ -1359,6 +1363,7 @@ definitions:
     - "protocol"
     - "serviceID"
     - "tenantID"
+    - "url"
     properties:
       serviceID:
         type: "string"
@@ -1370,6 +1375,9 @@ definitions:
         type: "string"
         description: "Name of the service."
       protocol:
+        type: "string"
+        description: "protocol used by the service."
+      url:
         type: "string"
         description: "protocol used by the service."
     description: "HTTP body defining the service store operation"
@@ -1415,6 +1423,7 @@ definitions:
     - "name"
     - "requestorID"
     - "token"
+    - "url"
     properties:
       requestorID:
         type: "string"
@@ -1429,6 +1438,9 @@ definitions:
       name:
         type: "string"
         description: "Name of the tenant."
+      url:
+        type: "string"
+        description: "Url of the tenant."
     description: "HTTP body defining the service store operation"
   state-tenant-store-member-body:
     type: "object"
@@ -1508,6 +1520,7 @@ definitions:
     - "cloudMemberIDs"
     - "id"
     - "name"
+    - "url"
     properties:
       id:
         type: "string"
@@ -1515,6 +1528,9 @@ definitions:
       name:
         type: "string"
         description: "Name of the service."
+      url:
+        type: "string"
+        description: "Url of the tenant."
       cloudMemberIDs:
         type: "array"
         description: "list of member cloud ids in the tenant"
