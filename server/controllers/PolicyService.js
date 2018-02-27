@@ -356,6 +356,8 @@ exports.policyStorePOST = function(args, res, next) {
     "policy" : args.policySpec.value.policy
   };
 
+  var policy_key = args.policySpec.value.policyType + "_" + args.policySpec.value.policyId;
+
   rp({
       method: 'POST',
       uri: url.format({
@@ -364,7 +366,7 @@ exports.policyStorePOST = function(args, res, next) {
            port: request_parameters.registry.port,
            pathname: request_parameters.path.registry_get
       }),
-    body: {"key": args.policySpec.value.policyId},
+    body: {"key": policy_key},
       header:{'User-Agent': 'Service-Ledger-Interface'},
       json: true
   }).then(response => {
@@ -389,7 +391,7 @@ exports.policyStorePOST = function(args, res, next) {
         console.log("(1 of 2) Store policy as <POLICY_<policyID>, metadeta>")
         // policy not exists, so we store it
         var options = {
-            "key": args.policySpec.value.policyId,
+            "key": policy_key,
             "value": JSON.stringify({
                       policy: args.policySpec.value.policy,
                       serviceID: args.policySpec.value.serviceID,
@@ -439,7 +441,7 @@ exports.policyStorePOST = function(args, res, next) {
             // if old result exists
             console.log("Previos pair for the SERVICE with id " + args.policySpec.value.serviceID);
             console.log(response);
-            var policyIdList = response.message + ';' + args.policySpec.value.policyId + ',' + args.policySpec.value.policy;
+            var policyIdList = response.message + ';' + policy_key + ',' + args.policySpec.value.policy;
             console.log("List of policy already referred to the service: "+ policyIdList);
 
             options = {
@@ -477,7 +479,7 @@ exports.policyStorePOST = function(args, res, next) {
           console.log("First time the service is registered! Creating the tuple!");
               options = {
                   "key": args.policySpec.value.serviceID,
-                  "value": args.policySpec.value.policyId + ',' + args.policySpec.value.policy
+                  "value": policy_key + ',' + args.policySpec.value.policy
               };
 
               console.log("---->store <serviceID, [policyId]>");

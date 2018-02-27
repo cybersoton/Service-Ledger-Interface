@@ -803,6 +803,7 @@ definitions:
     - "expirationTime"
     - "policy"
     - "policyId"
+    - "policyType"
     - "requestorID"
     - "token"
     properties:
@@ -830,6 +831,9 @@ definitions:
       policyType:
         type: "string"
         description: "The type of the policy."
+        enum:
+        - "POLICY_AC"
+        - "POLICY_SLA"
     description: "HTTP body defining the input for the store operation of policy"
   policy-ofservice-body:
     type: "object"
