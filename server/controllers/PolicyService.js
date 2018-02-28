@@ -35,7 +35,7 @@ exports.policyDeletePOST = function(args, res, next) {
       "key": args.policyId.value.dataId
   };
 
-  // read <serviceID, policy> pair and remove the link
+  // read the SERVICEID in the Policy spec
   rp({
       method: 'POST',
       uri: url.format({
@@ -50,13 +50,14 @@ exports.policyDeletePOST = function(args, res, next) {
   }).then(response => {
       if(debug) {
           console.log("---->response from Service-Ledger: ");
-          console.log(response);
+          console.log(response.message);
       }
 
-      // get the serviceID
+      // the value representing the policy in the KeyValueStore
       var policy_content = JSON.parse(response.message);
-      console.log(policy_content.serviceID);
+      var _service = "POL_" + policy_content.serviceID;
 
+      //retrieve the list of policy of the _service <serviceID, [policyID]
       rp({
            method: 'POST',
            uri: url.format({
@@ -65,29 +66,25 @@ exports.policyDeletePOST = function(args, res, next) {
            port: request_parameters.registry.port,
            pathname: request_parameters.path.registry_get
           }),
-        body: {"key": policy_content.serviceID},
+        body: {"key": _service},
         header: {'User-Agent': 'Service-Ledger-Interface'},
         json: true
       }).then(response => {
-          console.log("Retrieved current policy assigned to the SERVICEID: " + response);
+          console.log("Retrieved current policy assigned to the SERVICEID: ")
+          console.log(response);
+
           var policyIdArr = new Array();
-          policyIdArr = response.message.split(',');
-          var search_term = args.policyId.value.dataId;
+          policyIdArr = response.message.split(';');
           var str_new  = "";
           for(var i = 0; i < policyIdArr.length; i++) {
-              if(policyIdArr[i] == search_term) {
-                  policyIdArr.splice(i, 1);
-                  i--;
-              } else {
+              if(policyIdArr[i] != args.policyId.value.dataId) {
                   str_new = str_new + policyIdArr[i];
                   // console.log(str_new);
                   if(i != policyIdArr.length-1)
-                      str_new = str_new + ',';
+                      str_new = str_new + ';';
               }
           }
-          console.log("PolicyId: " + policyIdArr);
-
-          console.log("Updating the list of policy referred to the SERVICEID to " + str_new);
+          console.log("New list " + str_new);
           rp({
               method: 'POST',
               uri: url.format({
@@ -96,58 +93,59 @@ exports.policyDeletePOST = function(args, res, next) {
                                 port: request_parameters.registry.port,
                                 pathname: request_parameters.path.registry_put
                               }),
-              body: {"key": policy_content.serviceID, "value": str_new},
+              body: {
+                "key": _service,
+                "value": str_new
+              },
               header:{'User-Agent': 'Service-Ledger-Interface'},
               json: true
-          });
+          }).then(response => {
+            // delete <PolicyId, meta-data> pair
+            rp({
+                method: 'POST',
+                uri: url.format({
+                     protocol: 'http',
+                     hostname: request_parameters.registry.ip,
+                     port: request_parameters.registry.port,
+                     pathname: request_parameters.path.registry_delete
+                }),
+                body: options,
+                header: {'User-Agent': 'Service-Ledger-Interface'},
+                json: true
+            }).then(response => {
+                if(debug) {
+                    console.log("---->response from Service-Ledger: ");
+                    console.log(response);
+                }
+                examples['application/json'].message = response.message;
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
 
+            }).catch (err =>{
+              res.statusCode = 400;
+              res.end(JSON.stringify({error: "unexpected error in the delete operation!"}));
+            });
+            /* */
+          }).catch (err => {
+            res.statusCode = 400;
+            res.end(JSON.stringify({error: "Issue in updating managed services! Deletion aborted!"}));
+          });
+      }).catch(err => {
+        res.statusCode = 400;
+        res.end(JSON.stringify({error: "List of managed services not found! Deletion aborted!"}));
       });
   }).catch(err => {
-      if(err.statusCode == 400)
-      {
-          console.log("---->Policy not found!");
-          console.log(err)
-          res.statusCode = 400;
-          res.end(JSON.stringify({error: "unexpectedly policy not found"}));
+      if(err.statusCode == 400){
+        console.log("---->Policy not found!");
+        //console.log(err)
+        res.statusCode = 400;
+        res.end(JSON.stringify({error: "unexpectedly policy not found"}));
       } else {
-        console.log(err)
+        //console.log(err)
         res.statusCode = 400;
         res.end(JSON.stringify({error: "unexpected error in the delete operation"}));
       }
   });
-
-  // delte <PolicyId, meta-data> pair
-  rp({
-      method: 'POST',
-      uri: url.format({
-           protocol: 'http',
-           hostname: request_parameters.registry.ip,
-           port: request_parameters.registry.port,
-           pathname: request_parameters.path.registry_delete
-      }),
-      body: options,
-      header: {'User-Agent': 'Service-Ledger-Interface'},
-      json: true
-  }).then(response => {
-      if(debug) {
-          console.log("---->response from Service-Ledger: ");
-          console.log(response);
-      }
-      examples['application/json'].message = response.message;
-      if(Object.keys(examples).length > 0) {
-          res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-      } else {
-        res.statusCode = 400;
-        res.end(JSON.stringify({error: "unexpected error in the delete operation"}));
-      }
-  }).catch(err => {
-    console.log(err);
-    res.statusCode = 400;
-    res.end(JSON.stringify({error: "unexpected error in the delete operation"}));
-  });
-
-
 }
 
 exports.policyPolServicePOST = function(args, res, next) {
@@ -172,7 +170,7 @@ exports.policyPolServicePOST = function(args, res, next) {
   };
 
   var options = {
-      "key": args.serviceId.value.serviceID
+      "key": "POL_" + args.serviceId.value.serviceID
   };
 
   rp({
@@ -426,6 +424,7 @@ exports.policyStorePOST = function(args, res, next) {
 
         console.log("(2 of 2) Adding the policy to the serviceID reference");
         // read the existing <serviceId, [policyId]> pair
+        var _service = "POL_" + args.policySpec.value.serviceID
         rp({
             method: 'POST',
             uri: url.format({
@@ -434,18 +433,18 @@ exports.policyStorePOST = function(args, res, next) {
                  port: request_parameters.registry.port,
                  pathname: request_parameters.path.registry_get
             }),
-            body: {"key": args.policySpec.value.serviceID},
+            body: {"key":_service },
             header:{'User-Agent': 'Service-Ledger-Interface'},
             json: true
         }).then(response => {
             // if old result exists
             console.log("Previos pair for the SERVICE with id " + args.policySpec.value.serviceID);
             console.log(response);
-            var policyIdList = response.message + ';' + policy_key + ',' + args.policySpec.value.policy;
+            var policyIdList = response.message + ';' + policy_key;
             console.log("List of policy already referred to the service: "+ policyIdList);
 
             options = {
-                "key": args.policySpec.value.serviceID,
+                "key": _service,
                 "value": policyIdList
             };
 
@@ -478,8 +477,8 @@ exports.policyStorePOST = function(args, res, next) {
         }).catch(err => {
           console.log("First time the service is registered! Creating the tuple!");
               options = {
-                  "key": args.policySpec.value.serviceID,
-                  "value": policy_key + ',' + args.policySpec.value.policy
+                  "key": _service,
+                  "value": policy_key
               };
 
               console.log("---->store <serviceID, [policyId]>");
