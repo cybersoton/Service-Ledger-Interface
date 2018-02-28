@@ -75,16 +75,14 @@ exports.policyDeletePOST = function(args, res, next) {
 
           var policyIdArr = new Array();
           policyIdArr = response.message.split(';');
-          var str_new  = "";
+          var str_new  = [];
           for(var i = 0; i < policyIdArr.length; i++) {
               if(policyIdArr[i] != args.policyId.value.dataId) {
-                  str_new = str_new + policyIdArr[i];
+                  str_new.push(policyIdArr[i]);
                   // console.log(str_new);
-                  if(i != policyIdArr.length-1)
-                      str_new = str_new + ';';
               }
           }
-          console.log("New list " + str_new);
+          console.log("New list " + str_new.join(";"));
           rp({
               method: 'POST',
               uri: url.format({
@@ -95,7 +93,7 @@ exports.policyDeletePOST = function(args, res, next) {
                               }),
               body: {
                 "key": _service,
-                "value": str_new
+                "value": str_new.join(";")
               },
               header:{'User-Agent': 'Service-Ledger-Interface'},
               json: true
