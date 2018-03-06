@@ -168,7 +168,7 @@ exports.policyPolServicePOST = function(args, res, next) {
   };
 
   var options = {
-      "key": "POL_" + args.serviceId.value.serviceID
+		"key": "POL_" + args.serviceId.value.serviceID.substring(8)
   };
 
   rp({
