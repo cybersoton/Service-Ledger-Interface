@@ -54,7 +54,7 @@ exports.proposalCountVotesPOST = function(args, res, next) {
     examples['application/json'].proposalStatus = value_content.proposalStatus;
 
 
-    if(Object.keys(examples).length > 0) {
+    if (Object.keys(examples).length > 0) {
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
     } else {
@@ -149,32 +149,16 @@ exports.proposalGetProposalPOST = function(args, res, next) {
          res.end();
     }
   }).catch(err => {
-    if(err.statusCode == 404)
+    if (err.statusCode == 404)
     {
-      if(debug) console.log("---->Proposal not found!");
-      examples['application/json'].requestorID = "none";
-      examples['application/json'].proposalID = args.body.value.proposalID;
-      examples['application/json'].proposalDescription = "none";
-      examples['application/json'].proposalType = "none";
-      examples['application/json'].proposalQuorum = "none";
-      examples['application/json'].votersNumber = "none";
-      examples['application/json'].proposalStatus = "none";
+			console.log("---->Proposal not found!");
     } else {
-      if(debug) console.log("---->error when request to get the proposal!");
-      examples['application/json'].requestorID = "none";
-      examples['application/json'].proposalID = args.body.value.proposalID;
-      examples['application/json'].proposalDescription = "error";
-      examples['application/json'].proposalType = "error";
-      examples['application/json'].proposalQuorum = "error";
-      examples['application/json'].votersNumber = "error";
-      examples['application/json'].proposalStatus = "error";
+      console.log("---->error when request to get the proposal!");
     }
-    if(Object.keys(examples).length > 0) {
+    if (Object.keys(examples).length > 0) {
       res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(examples[Object.keys(examples)[0]] || {}, null, 2));
-    } else {
-      res.end();
-    }
+			res.end(JSON.stringify({error: "unexpectedly policy not found"}));
+    } 
   });
 }
 
