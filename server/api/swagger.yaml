@@ -1572,15 +1572,6 @@ definitions:
         - "unanimity"
         - "majority"
         - "oneThird"
-      proposalStatus:
-        type: "string"
-        description: "It indicates the curent status of a proposal at the beginning\
-          \ will be submitted as \"pending\", after a vote session become \"accepted\"\
-          \ or \"rejected\""
-        enum:
-        - "pending"
-        - "accepted"
-        - "rejected"
       votersNumber:
         type: "string"
         description: "It defines what is the quorumdesired quorum for the submitted\
