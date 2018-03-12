@@ -789,7 +789,7 @@ paths:
         200:
           description: "The response body for a successful response."
           schema:
-            $ref: "#/definitions/countvotes-proposal-response"
+            $ref: "#/definitions/ack-response"
         400:
           description: "Invalid request, required parameter(s) missing."
         401:
